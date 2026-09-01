@@ -68,3 +68,28 @@ class SparepartResponse(SparepartBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# =========================
+# SERVICE ORDER
+# =========================
+
+class ServiceOrderBase(BaseModel):
+    vehicle_id: int
+    mechanic_id: int | None = None
+    complaint: str
+    diagnosis: str | None = None
+    status: str = "waiting"
+    total_cost: float = 0.0
+
+
+class ServiceOrderCreate(ServiceOrderBase):
+    pass
+
+
+class ServiceOrderResponse(ServiceOrderBase):
+    id: int
+    created_at: datetime
+    completed_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)

@@ -22,9 +22,7 @@ router = APIRouter(
 def get_customers(
     db: Session = Depends(get_db)
 ):
-    customers = db.query(Customer).all()
-
-    return customers
+    return db.query(Customer).all()
 
 
 @router.get(
@@ -71,3 +69,50 @@ def create_customer(
     db.refresh(customer)
 
     return customer
+
+
+@router.put(
+    "/{customer_id}",
+    response_model=CustomerResponse
+)
+def update_customer(
+    customer_id: int,
+    customer_data: CustomerCreate,
+    db: Session = Depends(get_db)
+):
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer tidak ditemukan"
+        )
+
+    customer.name = customer_data.name
+    customer.phone = customer_data.phone
+    customer.email = customer_data.email
+    customer.address = customer_data.address
+
+    db.commit()
+    db.refresh(customer)
+
+    return customer
+
+
+@router.delete(
+    "/{customer_id}"
+)
+def delete_customer(
+    customer_id: int,
+    db: Session = Depends(get_db)
+):
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer tidak ditemukan"
+        )
+
+    db.delete(customer)
+    db.commit()
+
+    return {"status": "deleted"}

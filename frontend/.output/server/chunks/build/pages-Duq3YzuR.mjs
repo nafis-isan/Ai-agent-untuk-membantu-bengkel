@@ -1,0 +1,74 @@
+import { t as components_default } from './components-Cd10hOdb.mjs';
+import { defineComponent, mergeProps, useSSRContext } from 'vue';
+import { ssrRenderAttrs, ssrRenderComponent } from 'vue/server-renderer';
+import '../virtual/entry.mjs';
+import 'nostics';
+import 'nostics/formatters/ansi';
+import 'unhead/utils';
+import '../routes/renderer.mjs';
+import '../_/nitro.mjs';
+import 'node:http';
+import 'node:https';
+import 'node:events';
+import 'node:buffer';
+import 'node:fs';
+import 'node:path';
+import 'node:crypto';
+import 'node:url';
+import '@iconify/utils';
+import 'consola';
+import 'unhead/server';
+import 'unhead/legacy';
+import 'unhead/plugins';
+import 'vue-bundle-renderer/runtime';
+import 'devalue';
+import 'vue-router';
+import '@vue/shared';
+import 'pinia';
+import '@iconify/vue';
+import 'tailwindcss/colors';
+import '@iconify/utils/lib/css/icon';
+
+//#region pages/index.vue?vue&type=script&setup=true&lang.ts
+var index_vue_vue_type_script_setup_true_lang_default = /*@__PURE__*/ defineComponent({
+	__name: "index",
+	__ssrInlineRender: true,
+	setup(__props) {
+		return (_ctx, _push, _parent, _attrs) => {
+			const _component_Icon = components_default;
+			_push(`<div${ssrRenderAttrs(mergeProps({ class: "p-8" }, _attrs))}><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"><div class="bg-white rounded-lg shadow p-6"><div class="flex items-center justify-between"><div><p class="text-slate-600 text-sm">Total Pelanggan</p><h3 class="text-3xl font-bold text-slate-900 mt-2">150</h3></div>`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:users",
+				class: "w-12 h-12 text-blue-500 opacity-20"
+			}, null, _parent));
+			_push(`</div></div><div class="bg-white rounded-lg shadow p-6"><div class="flex items-center justify-between"><div><p class="text-slate-600 text-sm">Kendaraan Terdaftar</p><h3 class="text-3xl font-bold text-slate-900 mt-2">280</h3></div>`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:car",
+				class: "w-12 h-12 text-green-500 opacity-20"
+			}, null, _parent));
+			_push(`</div></div><div class="bg-white rounded-lg shadow p-6"><div class="flex items-center justify-between"><div><p class="text-slate-600 text-sm">Servis Bulan Ini</p><h3 class="text-3xl font-bold text-slate-900 mt-2">45</h3></div>`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:wrench",
+				class: "w-12 h-12 text-orange-500 opacity-20"
+			}, null, _parent));
+			_push(`</div></div><div class="bg-white rounded-lg shadow p-6"><div class="flex items-center justify-between"><div><p class="text-slate-600 text-sm">Pendapatan</p><h3 class="text-3xl font-bold text-slate-900 mt-2">Rp 45M</h3></div>`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:trending-up",
+				class: "w-12 h-12 text-purple-500 opacity-20"
+			}, null, _parent));
+			_push(`</div></div></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="bg-white rounded-lg shadow p-6"><h3 class="text-lg font-semibold text-slate-900 mb-4">Servis Terbaru</h3><div class="space-y-4"><div class="flex items-center justify-between pb-4 border-b border-slate-200"><div><p class="font-medium text-slate-900">Honda Civic - D 1234 ABC</p><p class="text-sm text-slate-500">Ganti oli dan filter</p></div><span class="text-sm font-semibold text-green-600">Selesai</span></div><div class="flex items-center justify-between pb-4 border-b border-slate-200"><div><p class="font-medium text-slate-900">Toyota Avanza - D 5678 DEF</p><p class="text-sm text-slate-500">Perbaikan AC</p></div><span class="text-sm font-semibold text-blue-600">Proses</span></div><div class="flex items-center justify-between"><div><p class="font-medium text-slate-900">Suzuki Ertiga - D 9012 GHI</p><p class="text-sm text-slate-500">Service rutin</p></div><span class="text-sm font-semibold text-yellow-600">Menunggu</span></div></div></div><div class="bg-white rounded-lg shadow p-6"><h3 class="text-lg font-semibold text-slate-900 mb-4">Suku Cadang Low Stock</h3><div class="space-y-4"><div class="flex items-center justify-between pb-4 border-b border-slate-200"><div><p class="font-medium text-slate-900">Filter Oli</p><p class="text-sm text-slate-500">Stok: 5 unit</p></div><span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">Kritis</span></div><div class="flex items-center justify-between pb-4 border-b border-slate-200"><div><p class="font-medium text-slate-900">Air Filter</p><p class="text-sm text-slate-500">Stok: 8 unit</p></div><span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">Rendah</span></div><div class="flex items-center justify-between"><div><p class="font-medium text-slate-900">Aki 12V</p><p class="text-sm text-slate-500">Stok: 12 unit</p></div><span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Normal</span></div></div></div></div></div>`);
+		};
+	}
+});
+//#endregion
+//#region pages/index.vue
+var _sfc_setup = index_vue_vue_type_script_setup_true_lang_default.setup;
+index_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
+	const ssrContext = useSSRContext();
+	(ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/index.vue");
+	return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+var pages_default = index_vue_vue_type_script_setup_true_lang_default;
+
+export { pages_default as default };
+//# sourceMappingURL=pages-Duq3YzuR.mjs.map

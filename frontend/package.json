@@ -1,0 +1,31 @@
+{
+  "name": "bengkel-ai-frontend",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "vue": "latest",
+    "nuxt": "latest",
+    "@nuxtjs/tailwindcss": "latest",
+    "@nuxt/ui": "latest",
+    "pinia": "latest",
+    "@pinia/nuxt": "latest",
+    "axios": "latest",
+    "date-fns": "latest",
+    "lucide-vue-next": "latest"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@tailwindcss/forms": "latest",
+    "tailwindcss": "latest",
+    "postcss": "latest",
+    "autoprefixer": "latest"
+  }
+}

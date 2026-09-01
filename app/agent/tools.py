@@ -1,16 +1,58 @@
-"""Tools for AI Agent"""
+from sqlalchemy.orm import Session
+
+from app.database.models import Vehicle
 
 
-def get_customer_info(customer_id: str) -> dict:
-    """Get customer information"""
-    pass
+def search_vehicle(
+    plate_number: str,
+    db: Session
+) -> dict:
 
+    vehicle = (
+        db.query(Vehicle)
+        .filter(
+            Vehicle.plate_number == plate_number
+        )
+        .first()
+    )
 
-def get_vehicle_history(vehicle_id: str) -> list:
-    """Get vehicle service history"""
-    pass
+    if not vehicle:
+        return {
+            "found": False,
+            "message": "Kendaraan tidak ditemukan."
+        }
 
+    return {
+        "found": True,
+        "vehicle": {
+            "id": vehicle.id,
+            "plate_number": vehicle.plate_number,
+            "brand": vehicle.brand,
+            "model": vehicle.model,
+            "year": vehicle.year,
+            "vehicle_type": vehicle.vehicle_type,
+            "customer_id": vehicle.customer_id
+        }
+    }
 
-def schedule_service(customer_id: str, service_date: str) -> bool:
-    """Schedule a vehicle service"""
-    pass
+SEARCH_VEHICLE_TOOL = {
+    "type": "function",
+    "name": "search_vehicle",
+    "description": (
+        "Mencari data kendaraan berdasarkan nomor plat "
+        "kendaraan di database bengkel."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "plate_number": {
+                "type": "string",
+                "description": (
+                    "Nomor plat kendaraan, "
+                    "contoh: D 1234 ABC"
+                )
+            }
+        },
+        "required": ["plate_number"]
+    }
+}

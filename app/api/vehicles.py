@@ -26,18 +26,16 @@ def get_vehicles(
 
 
 @router.get(
-    "/{plate_number}",
+    "/{vehicle_id}",
     response_model=VehicleResponse
 )
 def get_vehicle(
-    plate_number: str,
+    vehicle_id: int,
     db: Session = Depends(get_db)
 ):
     vehicle = (
         db.query(Vehicle)
-        .filter(
-            Vehicle.plate_number == plate_number
-        )
+        .filter(Vehicle.id == vehicle_id)
         .first()
     )
 
@@ -85,3 +83,59 @@ def create_vehicle(
     db.refresh(vehicle)
 
     return vehicle
+
+
+@router.put(
+    "/{vehicle_id}",
+    response_model=VehicleResponse
+)
+def update_vehicle(
+    vehicle_id: int,
+    vehicle_data: VehicleCreate,
+    db: Session = Depends(get_db)
+):
+    vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(
+            status_code=404,
+            detail="Kendaraan tidak ditemukan"
+        )
+
+    customer = db.query(Customer).filter(Customer.id == vehicle_data.customer_id).first()
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer tidak ditemukan"
+        )
+
+    vehicle.customer_id = vehicle_data.customer_id
+    vehicle.plate_number = vehicle_data.plate_number
+    vehicle.brand = vehicle_data.brand
+    vehicle.model = vehicle_data.model
+    vehicle.year = vehicle_data.year
+    vehicle.vehicle_type = vehicle_data.vehicle_type
+
+    db.commit()
+    db.refresh(vehicle)
+
+    return vehicle
+
+
+@router.delete(
+    "/{vehicle_id}"
+)
+def delete_vehicle(
+    vehicle_id: int,
+    db: Session = Depends(get_db)
+):
+    vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(
+            status_code=404,
+            detail="Kendaraan tidak ditemukan"
+        )
+
+    db.delete(vehicle)
+    db.commit()
+
+    return {"status": "deleted"}
