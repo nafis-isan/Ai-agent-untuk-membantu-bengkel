@@ -1,15 +1,11 @@
 import os
-import json
 
 from dotenv import load_dotenv
 from google import genai
 from sqlalchemy.orm import Session
 
 from app.agent.prompts import SYSTEM_PROMPT
-from app.agent.tools import (
-    SEARCH_VEHICLE_TOOL,
-    search_vehicle
-)
+from app.agent.tools import search_vehicle
 
 
 load_dotenv()
@@ -31,59 +27,27 @@ def run_agent(
     message: str,
     db: Session
 ) -> str:
-
-    interaction = client.interactions.create(
-        model=MODEL_NAME,
-        input=f"""
+    try:
+        # Create a simple agent without function calling
+        # Just send the message to Gemini and get a response
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=f"""
 {SYSTEM_PROMPT}
 
 Pesan pengguna:
 {message}
-""",
-        tools=[
-            SEARCH_VEHICLE_TOOL
-        ]
-    )
-
-    function_call = None
-
-    for step in interaction.steps:
-
-        if step.type == "function_call":
-            function_call = step
-            break
-
-    if function_call is None:
-        return interaction.output_text
-
-    if function_call.name == "search_vehicle":
-
-        result = search_vehicle(
-            plate_number=function_call.arguments["plate_number"],
-            db=db
+"""
         )
 
-        final_interaction = client.interactions.create(
-            model=MODEL_NAME,
-            previous_interaction_id=interaction.id,
-            input=[
-                {
-                    "type": "function_result",
-                    "name": function_call.name,
-                    "call_id": function_call.id,
-                    "result": [
-                        {
-                            "type": "text",
-                            "text": json.dumps(result)
-                        }
-                    ]
-                }
-            ],
-            tools=[
-                SEARCH_VEHICLE_TOOL
-            ]
-        )
+        # If no response text, return error message
+        if not response.text:
+            return "Maaf, tidak dapat memproses permintaan Anda."
 
-        return final_interaction.output_text
+        # For now, just return the text response
+        # We can add tool calling support later with a different approach
+        return response.text
 
-    return "Maaf, tool yang diminta belum tersedia."
+    except Exception as e:
+        print(f"Error in run_agent: {type(e).__name__}: {e}")
+        raise

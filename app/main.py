@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.customers import router as customer_router
 from app.api.vehicles import router as vehicle_router
@@ -12,6 +13,15 @@ app = FastAPI(
     title="BengkelAI",
     description="AI Agent untuk membantu operasional bengkel",
     version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

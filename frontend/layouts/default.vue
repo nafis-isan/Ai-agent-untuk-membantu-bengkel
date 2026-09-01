@@ -65,11 +65,8 @@
         <div class="flex justify-between items-center">
           <h2 class="text-xl font-semibold text-slate-900">{{ pageTitle }}</h2>
           <div class="flex items-center gap-4">
-            <button class="p-2 hover:bg-slate-100 rounded-lg">
+            <button class="p-2 hover:bg-slate-100 rounded-lg" aria-label="Notifikasi">
               <Icon name="lucide:bell" class="w-5 h-5 text-slate-600" />
-            </button>
-            <button class="p-2 hover:bg-slate-100 rounded-lg">
-              <Icon name="lucide:user" class="w-5 h-5 text-slate-600" />
             </button>
           </div>
         </div>

@@ -35,24 +35,21 @@ def search_vehicle(
         }
     }
 
+
 SEARCH_VEHICLE_TOOL = {
     "type": "function",
-    "name": "search_vehicle",
-    "description": (
-        "Mencari data kendaraan berdasarkan nomor plat "
-        "kendaraan di database bengkel."
-    ),
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "plate_number": {
-                "type": "string",
-                "description": (
-                    "Nomor plat kendaraan, "
-                    "contoh: D 1234 ABC"
-                )
-            }
-        },
-        "required": ["plate_number"]
+    "function": {
+        "name": "search_vehicle",
+        "description": "Mencari data kendaraan berdasarkan nomor plat kendaraan di database bengkel.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "plate_number": {
+                    "type": "string",
+                    "description": "Nomor plat kendaraan, contoh: D 1234 ABC"
+                }
+            },
+            "required": ["plate_number"]
+        }
     }
 }
