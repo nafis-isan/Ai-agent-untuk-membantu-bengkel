@@ -1,22 +1,22 @@
 <template>
-  <div class="p-8">
-    <div class="flex justify-between items-center mb-6">
-      <h3 class="text-2xl font-bold text-slate-900">Manajemen Suku Cadang</h3>
+  <div class="space-y-6">
+    <div class="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p class="mb-2 text-sm font-semibold text-blue-600">Inventory bengkel</p><h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Manajemen Suku Cadang</h2><p class="mt-2 text-sm text-slate-500">Kelola stok dan kebutuhan sparepart bengkel.</p></div>
       <button
         @click="showForm = true"
-        class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700"
       >
         <Icon name="lucide:plus" class="w-5 h-5" />
         Tambah Suku Cadang
       </button>
     </div>
 
-    <div class="mb-6">
+    <div class="relative rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_4px_20px_rgb(15_23_42/0.03)]">
+      <Icon name="lucide:search" class="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
       <input
         v-model="searchQuery"
         type="text"
         placeholder="Cari suku cadang..."
-        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full rounded-xl border-0 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
       />
     </div>
 
@@ -28,7 +28,7 @@
       <div
         v-for="part in filteredParts"
         :key="part.id"
-        class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_4px_20px_rgb(15_23_42/0.03)] transition hover:-translate-y-0.5 hover:shadow-md"
       >
         <div class="flex items-start justify-between mb-4">
           <div>
@@ -72,8 +72,8 @@
       </div>
     </div>
 
-    <div v-if="showForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+    <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm">
+      <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
         <h3 class="text-lg font-bold text-slate-900 mb-4">
           {{ editingId ? 'Edit Suku Cadang' : 'Tambah Suku Cadang' }}
         </h3>

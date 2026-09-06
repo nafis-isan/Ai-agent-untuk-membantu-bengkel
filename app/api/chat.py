@@ -16,12 +16,14 @@ router = APIRouter(
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = ""
     session_id: str = "default"
+    action: dict | None = None
 
 
 class ChatResponse(BaseModel):
     response: str
+    actions: list[dict] = []
 
 
 @router.post(
@@ -33,21 +35,20 @@ def chat(
     db: Session = Depends(get_db)
 ):
     try:
-        if not request.message or not request.message.strip():
+        if not request.message.strip() and not request.action:
             raise HTTPException(
                 status_code=400,
                 detail="Message tidak boleh kosong"
             )
 
-        response = run_agent(
+        result = run_agent(
             message=request.message,
             db=db,
-            session_id=request.session_id
+            session_id=request.session_id,
+            confirmed_action=request.action,
         )
 
-        return {
-            "response": response
-        }
+        return result
     except HTTPException:
         raise
     except (TimeoutError, requests.exceptions.Timeout, httpx.TimeoutException) as e:

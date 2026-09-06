@@ -1,0 +1,102 @@
+import { t as components_default } from './components-Bfu6e32q.mjs';
+import { u as useSparepartStore } from './spareparts-Cvk0Ctb5.mjs';
+import { defineComponent, ref, computed, mergeProps, unref, useSSRContext } from 'vue';
+import { ssrRenderAttrs, ssrRenderComponent, ssrRenderAttr, ssrRenderList, ssrInterpolate, ssrRenderClass } from 'vue/server-renderer';
+import '../virtual/entry.mjs';
+import 'nostics';
+import 'nostics/formatters/ansi';
+import 'unhead/utils';
+import '../routes/renderer.mjs';
+import '../_/nitro.mjs';
+import 'node:http';
+import 'node:https';
+import 'node:events';
+import 'node:buffer';
+import 'node:fs';
+import 'node:path';
+import 'node:crypto';
+import 'node:url';
+import '@iconify/utils';
+import 'consola';
+import 'unhead/server';
+import 'unhead/legacy';
+import 'unhead/plugins';
+import 'vue-bundle-renderer/runtime';
+import 'devalue';
+import 'vue-router';
+import '@vue/shared';
+import 'pinia';
+import '@iconify/vue';
+import 'tailwindcss/colors';
+import '@iconify/utils/lib/css/icon';
+
+//#region pages/spareparts.vue?vue&type=script&setup=true&lang.ts
+var spareparts_vue_vue_type_script_setup_true_lang_default = /*@__PURE__*/ defineComponent({
+	__name: "spareparts",
+	__ssrInlineRender: true,
+	setup(__props) {
+		const sparepartStore = useSparepartStore();
+		const searchQuery = ref("");
+		const showForm = ref(false);
+		const editingId = ref(null);
+		const emptyForm = () => ({
+			part_number: "",
+			name: "",
+			brand: "",
+			price: 0,
+			stock: 0,
+			minimum_stock: 0
+		});
+		const formData = ref(emptyForm());
+		const filteredParts = computed(() => {
+			return sparepartStore.spareparts.filter((part) => part.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || part.part_number.toLowerCase().includes(searchQuery.value.toLowerCase()));
+		});
+		const getStockColor = (stock, minimum) => {
+			if (stock < minimum) return "text-red-600";
+			if (stock < minimum + 5) return "text-yellow-600";
+			return "text-green-600";
+		};
+		return (_ctx, _push, _parent, _attrs) => {
+			const _component_Icon = components_default;
+			_push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-6" }, _attrs))}><div class="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p class="mb-2 text-sm font-semibold text-blue-600">Inventory bengkel</p><h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Manajemen Suku Cadang</h2><p class="mt-2 text-sm text-slate-500">Kelola stok dan kebutuhan sparepart bengkel.</p></div><button class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700">`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:plus",
+				class: "w-5 h-5"
+			}, null, _parent));
+			_push(` Tambah Suku Cadang </button></div><div class="relative rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_4px_20px_rgb(15_23_42/0.03)]">`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:search",
+				class: "absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+			}, null, _parent));
+			_push(`<input${ssrRenderAttr("value", unref(searchQuery))} type="text" placeholder="Cari suku cadang..." class="w-full rounded-xl border-0 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-100"></div>`);
+			if (unref(sparepartStore).loading) _push(`<div class="text-center py-8"><p class="text-slate-600">Memuat data...</p></div>`);
+			else {
+				_push(`<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!--[-->`);
+				ssrRenderList(unref(filteredParts), (part) => {
+					_push(`<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_4px_20px_rgb(15_23_42/0.03)] transition hover:-translate-y-0.5 hover:shadow-md"><div class="flex items-start justify-between mb-4"><div><h4 class="text-lg font-bold text-slate-900">${ssrInterpolate(part.name)}</h4><p class="text-sm text-slate-600">${ssrInterpolate(part.part_number)}</p></div>`);
+					_push(ssrRenderComponent(_component_Icon, {
+						name: "lucide:package",
+						class: "w-8 h-8 text-orange-500 opacity-40"
+					}, null, _parent));
+					_push(`</div><div class="space-y-2 mb-4 pb-4 border-b border-slate-200"><p class="text-sm"><span class="text-slate-600">Merk:</span><span class="font-semibold text-slate-900">${ssrInterpolate(part.brand || "-")}</span></p><p class="text-sm"><span class="text-slate-600">Harga:</span><span class="font-semibold text-slate-900">Rp ${ssrInterpolate(Number(part.price).toLocaleString("id-ID"))}</span></p><p class="text-sm"><span class="text-slate-600">Stok:</span><span class="${ssrRenderClass(`font-semibold ${getStockColor(part.stock, part.minimum_stock)}`)}">${ssrInterpolate(part.stock)} unit </span></p></div><div class="flex gap-2"><button class="flex-1 text-sm bg-blue-50 text-blue-600 px-3 py-2 rounded hover:bg-blue-100 transition"> Edit </button><button class="flex-1 text-sm bg-slate-100 text-slate-700 px-3 py-2 rounded hover:bg-slate-200 transition"> Hapus </button></div></div>`);
+				});
+				_push(`<!--]--></div>`);
+			}
+			if (unref(showForm)) _push(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm"><div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl"><h3 class="text-lg font-bold text-slate-900 mb-4">${ssrInterpolate(unref(editingId) ? "Edit Suku Cadang" : "Tambah Suku Cadang")}</h3><form class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Nomor Part</label><input${ssrRenderAttr("value", unref(formData).part_number)} type="text" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Nama</label><input${ssrRenderAttr("value", unref(formData).name)} type="text" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Merk</label><input${ssrRenderAttr("value", unref(formData).brand)} type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Harga</label><input${ssrRenderAttr("value", unref(formData).price)} type="number" min="0" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-sm font-medium text-slate-700 mb-1">Stok</label><input${ssrRenderAttr("value", unref(formData).stock)} type="number" min="0" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Minimum</label><input${ssrRenderAttr("value", unref(formData).minimum_stock)} type="number" min="0" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></div></div><div class="flex gap-3"><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Simpan</button><button type="button" class="flex-1 bg-slate-300 text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-400 transition">Batal</button></div></form></div></div>`);
+			else _push(`<!---->`);
+			_push(`</div>`);
+		};
+	}
+});
+//#endregion
+//#region pages/spareparts.vue
+var _sfc_setup = spareparts_vue_vue_type_script_setup_true_lang_default.setup;
+spareparts_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
+	const ssrContext = useSSRContext();
+	(ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/spareparts.vue");
+	return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+var spareparts_default = spareparts_vue_vue_type_script_setup_true_lang_default;
+
+export { spareparts_default as default };
+//# sourceMappingURL=spareparts-CmmxHNf6.mjs.map

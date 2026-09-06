@@ -1,94 +1,34 @@
 <template>
-  <div class="p-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-600 text-sm">Total Pelanggan</p>
-            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ stats.customers }}</h3>
-          </div>
-          <Icon name="lucide:users" class="w-12 h-12 text-blue-500 opacity-20" />
-        </div>
-      </div>
+  <div class="space-y-8">
+    <section class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+      <div><p class="mb-2 text-sm font-semibold text-blue-600">Selamat datang kembali, Admin</p><h2 class="text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">Ringkasan bengkel</h2><p class="mt-2 text-sm text-slate-500">Pantau aktivitas dan kondisi operasional bengkel Anda hari ini.</p></div>
+      <NuxtLink to="/services" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700"><Icon name="lucide:plus" class="h-4 w-4" />Tambah Servis</NuxtLink>
+    </section>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-600 text-sm">Kendaraan Terdaftar</p>
-            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ stats.vehicles }}</h3>
-          </div>
-          <Icon name="lucide:car" class="w-12 h-12 text-green-500 opacity-20" />
-        </div>
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div v-for="stat in statCards" :key="stat.label" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgb(15_23_42/0.03)] transition hover:-translate-y-0.5 hover:shadow-md">
+        <div class="flex items-start justify-between"><div class="flex h-10 w-10 items-center justify-center rounded-xl" :class="stat.iconBg"><Icon :name="stat.icon" class="h-5 w-5" :class="stat.iconColor" /></div><span class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">Aktif</span></div>
+        <p class="mt-5 text-sm font-medium text-slate-500">{{ stat.label }}</p><p class="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">{{ stat.value }}</p><p class="mt-2 text-xs text-slate-400">{{ stat.note }}</p>
       </div>
+    </section>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-600 text-sm">Servis Aktif</p>
-            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ stats.services }}</h3>
-          </div>
-          <Icon name="lucide:wrench" class="w-12 h-12 text-orange-500 opacity-20" />
-        </div>
-      </div>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgb(15_23_42/0.03)] md:p-6">
+      <div class="flex items-center justify-between"><div><h3 class="text-base font-bold text-slate-900">Insight operasional</h3><p class="mt-1 text-xs text-slate-400">Ringkasan otomatis dari kondisi database bengkel</p></div><Icon name="lucide:sparkles" class="h-5 w-5 text-blue-500" /></div>
+      <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3"><div v-for="insight in insights" :key="insight.type" class="rounded-xl border p-4" :class="insightClass(insight.tone)"><div class="flex items-start gap-3"><Icon :name="insightIcon(insight.type)" class="mt-0.5 h-4 w-4 shrink-0" /><div><p class="text-sm font-bold">{{ insight.title }}</p><p class="mt-1 text-xs leading-5 opacity-80">{{ insight.description }}</p></div></div></div></div>
+    </section>
 
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-slate-600 text-sm">Suku Cadang Rendah</p>
-            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ stats.lowStock }}</h3>
-          </div>
-          <Icon name="lucide:alert-triangle" class="w-12 h-12 text-red-500 opacity-20" />
-        </div>
+    <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_0.65fr]">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgb(15_23_42/0.03)] md:p-6">
+        <div class="flex items-center justify-between"><div><h3 class="text-base font-bold text-slate-900">Ringkasan servis</h3><p class="mt-1 text-xs text-slate-400">Aktivitas servis dalam 6 periode terakhir</p></div><button class="rounded-lg p-2 text-slate-400 hover:bg-slate-50"><Icon name="lucide:more-horizontal" class="h-5 w-5" /></button></div>
+        <div class="mt-8 flex h-48 items-end justify-between gap-3 border-b border-l border-slate-200 px-2 pb-0 pt-4"><div v-for="(height, index) in chartBars" :key="index" class="flex h-full flex-1 flex-col items-center justify-end gap-2"><div class="w-full max-w-10 rounded-t-lg bg-blue-500 transition hover:bg-blue-600" :style="{ height: `${height}%` }"></div><span class="text-[10px] text-slate-400">{{ chartLabels[index] }}</span></div></div>
       </div>
-    </div>
+      <div class="rounded-2xl bg-slate-900 p-6 text-white"><div class="flex items-center gap-2 text-blue-300"><Icon name="lucide:activity" class="h-4 w-4" /><span class="text-xs font-bold uppercase tracking-wider">Operasional</span></div><h3 class="mt-6 text-xl font-extrabold">Semua terlihat terkendali.</h3><p class="mt-2 text-sm leading-6 text-slate-400">Jaga stok dan pantau antrean servis agar pelanggan mendapat layanan terbaik.</p><div class="mt-8 grid grid-cols-2 gap-3"><div class="rounded-xl bg-white/10 p-3"><p class="text-2xl font-extrabold">{{ stats.services }}</p><p class="mt-1 text-[11px] text-slate-400">Servis aktif</p></div><div class="rounded-xl bg-white/10 p-3"><p class="text-2xl font-extrabold">{{ stats.lowStock }}</p><p class="mt-1 text-[11px] text-slate-400">Perlu restock</p></div></div></div>
+    </section>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-slate-900 mb-4">Servis Terbaru</h3>
-        <div v-if="recentServices.length" class="space-y-4">
-          <div
-            v-for="service in recentServices"
-            :key="service.id"
-            class="flex items-center justify-between pb-4 border-b border-slate-200 last:border-0 last:pb-0"
-          >
-            <div>
-              <p class="font-medium text-slate-900">{{ getVehicleLabel(service.vehicle_id) }}</p>
-              <p class="text-sm text-slate-500">{{ service.complaint || 'Tidak ada keluhan' }}</p>
-            </div>
-            <span
-              class="text-sm font-semibold"
-              :class="statusClass(service.status)"
-            >
-              {{ statusLabel(service.status) }}
-            </span>
-          </div>
-        </div>
-        <div v-else class="text-sm text-slate-500">Belum ada data servis.</div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-slate-900 mb-4">Suku Cadang Low Stock</h3>
-        <div v-if="lowStockParts.length" class="space-y-4">
-          <div
-            v-for="item in lowStockParts"
-            :key="item.id"
-            class="flex items-center justify-between pb-4 border-b border-slate-200 last:border-0 last:pb-0"
-          >
-            <div>
-              <p class="font-medium text-slate-900">{{ item.name }}</p>
-              <p class="text-sm text-slate-500">Stok: {{ item.stock }} unit</p>
-            </div>
-            <span
-              class="px-3 py-1 text-xs font-semibold rounded-full"
-              :class="item.stock <= item.minimum_stock ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'"
-            >
-              {{ item.stock <= item.minimum_stock ? 'Kritis' : 'Rendah' }}
-            </span>
-          </div>
-        </div>
-        <div v-else class="text-sm text-slate-500">Tidak ada suku cadang low stock.</div>
-      </div>
-    </div>
+    <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_0.65fr]">
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgb(15_23_42/0.03)]"><div class="flex items-center justify-between border-b border-slate-100 p-5 md:p-6"><div><h3 class="text-base font-bold text-slate-900">Servis terbaru</h3><p class="mt-1 text-xs text-slate-400">Aktivitas pekerjaan yang baru masuk</p></div><NuxtLink to="/services" class="text-xs font-bold text-blue-600 hover:text-blue-700">Lihat semua</NuxtLink></div><div v-if="recentServices.length" class="divide-y divide-slate-100"><div v-for="service in recentServices" :key="service.id" class="flex items-center justify-between gap-4 p-5 transition hover:bg-slate-50"><div class="flex min-w-0 items-center gap-3"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600"><Icon name="lucide:wrench" class="h-4 w-4" /></span><div class="min-w-0"><p class="truncate text-sm font-bold text-slate-800">{{ getVehicleLabel(service.vehicle_id) }}</p><p class="truncate text-xs text-slate-400">{{ service.complaint || 'Tidak ada keluhan' }}</p></div></div><span class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold" :class="statusBadge(service.status)">{{ statusLabel(service.status) }}</span></div></div><div v-else class="p-8 text-center text-sm text-slate-400">Belum ada data servis.</div></div>
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgb(15_23_42/0.03)]"><div class="border-b border-slate-100 p-5 md:p-6"><h3 class="text-base font-bold text-slate-900">Perlu restock</h3><p class="mt-1 text-xs text-slate-400">Suku cadang di bawah batas minimum</p></div><div v-if="lowStockParts.length" class="divide-y divide-slate-100"><div v-for="item in lowStockParts" :key="item.id" class="p-5"><div class="flex items-center justify-between gap-3"><div class="flex min-w-0 items-center gap-3"><span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600"><Icon name="lucide:package" class="h-4 w-4" /></span><p class="truncate text-sm font-bold text-slate-800">{{ item.name }}</p></div><span class="text-xs font-bold text-rose-600">{{ item.stock }} tersisa</span></div><div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-amber-500" :style="{ width: `${Math.min((item.stock / Math.max(item.minimum_stock, 1)) * 100, 100)}%` }"></div></div></div></div><div v-else class="p-8 text-center text-sm text-slate-400">Stok semua aman.</div></div>
+    </section>
   </div>
 </template>
 
@@ -106,6 +46,8 @@ const customerStore = useCustomerStore()
 const vehicleStore = useVehicleStore()
 const serviceStore = useServiceStore()
 const sparepartStore = useSparepartStore()
+const config = useRuntimeConfig()
+const insights = ref<Array<{ type: string; tone: string; title: string; description: string }>>([])
 
 const stats = computed(() => ({
   customers: customerStore.customers.length,
@@ -113,6 +55,16 @@ const stats = computed(() => ({
   services: serviceStore.services.filter((service) => ['waiting', 'in_progress', 'scheduled'].includes(service.status)).length,
   lowStock: sparepartStore.spareparts.filter((item) => item.stock <= item.minimum_stock).length
 }))
+
+const statCards = computed(() => [
+  { label: 'Total Pelanggan', value: stats.value.customers, note: 'Terdaftar di sistem', icon: 'lucide:users', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+  { label: 'Kendaraan Terdaftar', value: stats.value.vehicles, note: 'Kendaraan pelanggan', icon: 'lucide:car-front', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+  { label: 'Servis Aktif', value: stats.value.services, note: 'Menunggu atau dikerjakan', icon: 'lucide:wrench', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
+  { label: 'Suku Cadang Low Stock', value: stats.value.lowStock, note: 'Perlu segera direstock', icon: 'lucide:package-open', iconBg: 'bg-rose-50', iconColor: 'text-rose-600' }
+])
+
+const chartBars = [42, 68, 54, 82, 64, 91]
+const chartLabels = ['Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu']
 
 const recentServices = computed(() => {
   return [...serviceStore.services]
@@ -154,12 +106,17 @@ const statusClass = (status: string) => {
   return map[status] || 'text-slate-600'
 }
 
+const statusBadge = (status: string) => ({ waiting: 'bg-amber-50 text-amber-700', in_progress: 'bg-blue-50 text-blue-700', scheduled: 'bg-indigo-50 text-indigo-700', completed: 'bg-emerald-50 text-emerald-700', cancelled: 'bg-rose-50 text-rose-700' }[status] || 'bg-slate-100 text-slate-600')
+const insightClass = (tone: string) => ({ blue: 'border-blue-100 bg-blue-50 text-blue-800', amber: 'border-amber-100 bg-amber-50 text-amber-800', rose: 'border-rose-100 bg-rose-50 text-rose-800', emerald: 'border-emerald-100 bg-emerald-50 text-emerald-800' }[tone] || 'border-slate-200 bg-slate-50 text-slate-700')
+const insightIcon = (type: string) => ({ active_services: 'lucide:wrench', low_stock: 'lucide:package-open', waiting_services: 'lucide:clock-3', healthy: 'lucide:circle-check' }[type] || 'lucide:info')
+
 onMounted(async () => {
   await Promise.all([
     customerStore.fetchCustomers(),
     vehicleStore.fetchVehicles(),
     serviceStore.fetchServices(),
-    sparepartStore.fetchSpareparts()
+    sparepartStore.fetchSpareparts(),
+    $fetch(`${config.public.apiBase}/insights/`).then((response: any) => { insights.value = response.insights || [] })
   ])
 })
 </script>

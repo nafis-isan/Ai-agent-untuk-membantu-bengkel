@@ -1,6 +1,7 @@
 """Database Initialization Script"""
 
 from .connection import Base, engine
+from . import models
 
 
 def init_database():

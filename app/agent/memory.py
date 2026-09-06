@@ -1,25 +1,31 @@
-from threading import Lock
+from sqlalchemy.orm import Session
+
+from app.database.models import AgentMessage
 
 
 class ConversationMemory:
     def __init__(self, max_messages: int = 20):
         self.max_messages = max_messages
-        self._conversations: dict[str, list[dict[str, str]]] = {}
-        self._lock = Lock()
+    def get(self, db: Session, session_id: str) -> list[dict[str, str]]:
+        messages = (
+            db.query(AgentMessage)
+            .filter(AgentMessage.session_id == session_id)
+            .order_by(AgentMessage.created_at.desc(), AgentMessage.id.desc())
+            .limit(self.max_messages)
+            .all()
+        )
+        return [
+            {"role": message.role, "content": message.content}
+            for message in reversed(messages)
+        ]
 
-    def get(self, session_id: str) -> list[dict[str, str]]:
-        with self._lock:
-            return list(self._conversations.get(session_id, []))
+    def add(self, db: Session, session_id: str, role: str, content: str) -> None:
+        db.add(AgentMessage(session_id=session_id, role=role, content=content))
+        db.commit()
 
-    def add(self, session_id: str, role: str, content: str) -> None:
-        with self._lock:
-            messages = self._conversations.setdefault(session_id, [])
-            messages.append({"role": role, "content": content})
-            self._conversations[session_id] = messages[-self.max_messages:]
-
-    def clear(self, session_id: str) -> None:
-        with self._lock:
-            self._conversations.pop(session_id, None)
+    def clear(self, db: Session, session_id: str) -> None:
+        db.query(AgentMessage).filter(AgentMessage.session_id == session_id).delete()
+        db.commit()
 
 
 conversation_memory = ConversationMemory()

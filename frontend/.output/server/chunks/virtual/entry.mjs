@@ -1165,37 +1165,37 @@ var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Froutes_default = [
 		name: "chat",
 		path: "/chat",
 		meta: { layout: "default" },
-		component: () => import('../build/chat-7--MdCz8.mjs')
+		component: () => import('../build/chat-BoJ3xdHv.mjs')
 	},
 	{
 		name: "customers",
 		path: "/customers",
 		meta: { layout: "default" },
-		component: () => import('../build/customers-BUNnWCnn.mjs')
+		component: () => import('../build/customers-kluaibOI.mjs')
 	},
 	{
 		name: "services",
 		path: "/services",
 		meta: { layout: "default" },
-		component: () => import('../build/services-Cr5tvI8W.mjs')
+		component: () => import('../build/services-Vnxg5TUq.mjs')
 	},
 	{
 		name: "spareparts",
 		path: "/spareparts",
 		meta: { layout: "default" },
-		component: () => import('../build/spareparts-erInr4u_.mjs')
+		component: () => import('../build/spareparts-CmmxHNf6.mjs')
 	},
 	{
 		name: "vehicles",
 		path: "/vehicles",
 		meta: { layout: "default" },
-		component: () => import('../build/vehicles-Bk7VcO_3.mjs')
+		component: () => import('../build/vehicles-DD5IDuD0.mjs')
 	},
 	{
 		name: "index",
 		path: "/",
 		meta: { layout: "default" },
-		component: () => import('../build/pages-Bq0cUE42.mjs')
+		component: () => import('../build/pages-D5LkXngl.mjs')
 	}
 ];
 //#endregion
@@ -2664,7 +2664,7 @@ var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Fplugins_server_default =
 ];
 //#endregion
 //#region virtual:nuxt:node_modules%2F.cache%2Fnuxt%2F.nuxt%2Flayouts.mjs
-var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Flayouts_default = { default: defineAsyncComponent(() => import('../build/default-BPuaX0Qi.mjs').then((m) => m.default || m)) };
+var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Flayouts_default = { default: defineAsyncComponent(() => import('../build/default-R2SKe4yk.mjs').then((m) => m.default || m)) };
 //#endregion
 //#region node_modules/nuxt/dist/app/components/nuxt-layout.js
 var LayoutLoader = defineComponent({

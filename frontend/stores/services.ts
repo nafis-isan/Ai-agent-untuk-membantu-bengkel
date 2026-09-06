@@ -21,10 +21,29 @@ export const useServiceStore = defineStore('service', () => {
     }
   }
 
+  const createService = async (service: any) => {
+    loading.value = true
+    try {
+      const response = await $fetch(`${config.public.apiBase}/services/`, {
+        method: 'POST',
+        body: service
+      })
+      services.value.unshift(response)
+      error.value = null
+      return response
+    } catch (err: any) {
+      error.value = err?.data?.detail || err?.message || 'Error creating service'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     services,
     loading,
     error,
-    fetchServices
+    fetchServices,
+    createService
   }
 })

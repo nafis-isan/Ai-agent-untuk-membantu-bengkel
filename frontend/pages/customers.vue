@@ -1,24 +1,26 @@
 <template>
-  <div class="p-8">
-    <div class="flex justify-between items-center mb-6">
-      <h3 class="text-2xl font-bold text-slate-900">Daftar Pelanggan</h3>
+  <div class="space-y-6">
+    <div class="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <div><p class="mb-2 text-sm font-semibold text-blue-600">Database pelanggan</p><h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Daftar Pelanggan</h2><p class="mt-2 text-sm text-slate-500">Kelola data pelanggan dan hubungan kendaraan mereka.</p></div>
       <button
         @click="showForm = true"
-        class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700"
       >
         <Icon name="lucide:plus" class="w-5 h-5" />
         Tambah Pelanggan
       </button>
     </div>
 
-    <!-- Search Bar -->
-    <div class="mb-6">
+    <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_4px_20px_rgb(15_23_42/0.03)]">
+      <div class="relative">
+        <Icon name="lucide:search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
       <input
         v-model="searchQuery"
         type="text"
         placeholder="Cari pelanggan..."
-        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full rounded-xl border-0 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-800 outline-none ring-0 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
       />
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -27,9 +29,9 @@
     </div>
 
     <!-- Customers Table -->
-    <div v-else class="bg-white rounded-lg shadow overflow-hidden">
-      <table class="w-full">
-        <thead class="bg-slate-50 border-b border-slate-200">
+    <div v-else class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgb(15_23_42/0.03)]">
+      <table class="w-full min-w-[760px]">
+        <thead class="border-b border-slate-100 bg-slate-50/80">
           <tr>
             <th class="px-6 py-3 text-left text-sm font-semibold text-slate-900">Nama</th>
             <th class="px-6 py-3 text-left text-sm font-semibold text-slate-900">No. Telepon</th>
@@ -39,8 +41,8 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
-          <tr v-for="customer in filteredCustomers" :key="customer.id" class="hover:bg-slate-50">
-            <td class="px-6 py-4 text-sm text-slate-900">{{ customer.name }}</td>
+          <tr v-for="customer in filteredCustomers" :key="customer.id" class="transition hover:bg-slate-50">
+            <td class="px-6 py-4 text-sm font-bold text-slate-900">{{ customer.name }}</td>
             <td class="px-6 py-4 text-sm text-slate-600">{{ customer.phone }}</td>
             <td class="px-6 py-4 text-sm text-slate-600">{{ customer.email }}</td>
             <td class="px-6 py-4 text-sm text-slate-600">{{ customer.address }}</td>
@@ -64,11 +66,11 @@
     </div>
 
     <!-- Form Modal -->
-    <div v-if="showForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-        <h3 class="text-lg font-bold text-slate-900 mb-4">
+    <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm">
+      <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <div class="mb-5 flex items-start justify-between"><div><p class="text-xs font-semibold text-blue-600">Data pelanggan</p><h3 class="mt-1 text-xl font-extrabold text-slate-900">
           {{ editingId ? 'Edit Pelanggan' : 'Tambah Pelanggan' }}
-        </h3>
+        </h3></div><button @click="closeForm" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100" aria-label="Tutup"><Icon name="lucide:x" class="h-5 w-5" /></button></div>
 
         <form @submit.prevent="submitForm" class="space-y-4">
           <div>

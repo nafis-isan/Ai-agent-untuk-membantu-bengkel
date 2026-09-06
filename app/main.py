@@ -6,6 +6,7 @@ from app.api.vehicles import router as vehicle_router
 from app.api.spareparts import router as sparepart_router
 from app.api.services import router as service_router
 from app.api.chat import router as chat_router
+from app.api.insights import router as insights_router
 from app.database.init_db import init_database
 
 
@@ -33,6 +34,7 @@ app.include_router(vehicle_router)
 app.include_router(sparepart_router)
 app.include_router(service_router)
 app.include_router(chat_router)
+app.include_router(insights_router)
 
 
 @app.get("/")

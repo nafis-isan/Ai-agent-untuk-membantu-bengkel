@@ -2201,14 +2201,14 @@ const assets = {
   "/index.mjs": {
     "type": "text/javascript; charset=utf-8",
     "etag": "\"1e73e-YYLBWS5Q64BAe3KkCtrl6l+3ZqI\"",
-    "mtime": "2026-09-06T12:18:59.622Z",
+    "mtime": "2026-09-06T12:58:25.225Z",
     "size": 124734,
     "path": "index.mjs"
   },
   "/index.mjs.map": {
     "type": "application/json",
     "etag": "\"74f0d-qGSk5pXdmacHekCB1jOzqBxp8PE\"",
-    "mtime": "2026-09-06T12:18:59.623Z",
+    "mtime": "2026-09-06T12:58:25.224Z",
     "size": 478989,
     "path": "index.mjs.map"
   }

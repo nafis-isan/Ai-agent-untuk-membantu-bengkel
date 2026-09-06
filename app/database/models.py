@@ -277,3 +277,13 @@ class ServiceItem(Base):
     sparepart: Mapped["Sparepart"] = relationship(
         back_populates="service_items"
     )
+
+
+class AgentMessage(Base):
+    __tablename__ = "agent_messages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    role: Mapped[str] = mapped_column(String(20), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
