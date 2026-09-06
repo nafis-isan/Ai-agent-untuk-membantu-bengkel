@@ -1165,37 +1165,37 @@ var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Froutes_default = [
 		name: "chat",
 		path: "/chat",
 		meta: { layout: "default" },
-		component: () => import('../build/chat-BObH4JPv.mjs')
+		component: () => import('../build/chat-7--MdCz8.mjs')
 	},
 	{
 		name: "customers",
 		path: "/customers",
 		meta: { layout: "default" },
-		component: () => import('../build/customers-C9xA0eWm.mjs')
+		component: () => import('../build/customers-BUNnWCnn.mjs')
 	},
 	{
 		name: "services",
 		path: "/services",
 		meta: { layout: "default" },
-		component: () => import('../build/services-CF_Aioq2.mjs')
+		component: () => import('../build/services-Cr5tvI8W.mjs')
 	},
 	{
 		name: "spareparts",
 		path: "/spareparts",
 		meta: { layout: "default" },
-		component: () => import('../build/spareparts-Bc3G-HTy.mjs')
+		component: () => import('../build/spareparts-erInr4u_.mjs')
 	},
 	{
 		name: "vehicles",
 		path: "/vehicles",
 		meta: { layout: "default" },
-		component: () => import('../build/vehicles-D1eykjiz.mjs')
+		component: () => import('../build/vehicles-Bk7VcO_3.mjs')
 	},
 	{
 		name: "index",
 		path: "/",
 		meta: { layout: "default" },
-		component: () => import('../build/pages-DduOq4nR.mjs')
+		component: () => import('../build/pages-Bq0cUE42.mjs')
 	}
 ];
 //#endregion
@@ -2589,7 +2589,7 @@ var plugin_default = defineNuxtPlugin({
 });
 //#endregion
 //#region virtual:nuxt:node_modules%2F.cache%2Fnuxt%2F.nuxt%2Fcomponents.plugin.mjs
-var lazyGlobalComponents = [["Icon", defineAsyncComponent(() => import('../build/components-Cd10hOdb.mjs').then((n) => n.n).then((r) => r["default"] || r.default || r))]];
+var lazyGlobalComponents = [["Icon", defineAsyncComponent(() => import('../build/components-Bfu6e32q.mjs').then((n) => n.n).then((r) => r["default"] || r.default || r))]];
 var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Fcomponents_plugin_default = defineNuxtPlugin({
 	name: "nuxt:global-components",
 	setup(nuxtApp) {
@@ -2664,7 +2664,7 @@ var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Fplugins_server_default =
 ];
 //#endregion
 //#region virtual:nuxt:node_modules%2F.cache%2Fnuxt%2F.nuxt%2Flayouts.mjs
-var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Flayouts_default = { default: defineAsyncComponent(() => import('../build/default-sXwiOQTR.mjs').then((m) => m.default || m)) };
+var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Flayouts_default = { default: defineAsyncComponent(() => import('../build/default-BPuaX0Qi.mjs').then((m) => m.default || m)) };
 //#endregion
 //#region node_modules/nuxt/dist/app/components/nuxt-layout.js
 var LayoutLoader = defineComponent({
@@ -2923,8 +2923,8 @@ var _sfc_main$1 = {
 		const statusText = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
 		const description = _error.message || _error.toString();
 		const stack = void 0;
-		const _Error404 = defineAsyncComponent(() => import('../build/error-404-Bql9Wjtv.mjs'));
-		const _Error = defineAsyncComponent(() => import('../build/error-500-DZwPzCFG.mjs'));
+		const _Error404 = defineAsyncComponent(() => import('../build/error-404-DzdoIQIB.mjs'));
+		const _Error = defineAsyncComponent(() => import('../build/error-500-Cd1Lglox.mjs'));
 		const ErrorTemplate = is404 ? _Error404 : _Error;
 		return (_ctx, _push, _parent, _attrs) => {
 			_push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({

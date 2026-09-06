@@ -3,48 +3,48 @@ import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, getQuery as getQuery$1, getRequestWebStream, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, readBody, getResponseStatusText } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/h3/dist/index.mjs';
-import { escapeHtml } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/@vue/shared/dist/shared.cjs.js';
-import viteNodeEntry_mjs from 'file:///C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs';
-import { viteNodeFetch } from 'file:///C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/@nuxt/vite-builder/dist/vite-node.mjs';
-import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, parseQuery, parsePath, encodePath, joinRelativeURL } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/ufo/dist/index.mjs';
-import { createHead as createHead$1, propsToString, renderSSRHead } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unhead/dist/server.mjs';
-import { isVNode, isRef, toValue } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/vue/index.mjs';
-import { DeprecationsPlugin } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unhead/dist/legacy.mjs';
-import { PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unhead/dist/plugins.mjs';
-import { klona } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/defu/dist/defu.mjs';
-import destr, { destr as destr$1 } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/destr/dist/index.mjs';
-import { snakeCase } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/scule/dist/index.mjs';
-import { defineDiagnostics, createConsoleReporter } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/nostics/dist/index.mjs';
-import { ansiFormatter } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/nostics/dist/formatters/ansi.mjs';
-import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/vue-bundle-renderer/dist/runtime.mjs';
-import { renderToString } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/vue/server-renderer/index.mjs';
-import { stringify, uneval } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/devalue/index.js';
-import { createHooks } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/nitropack/node_modules/hookable/dist/index.mjs';
-import { createFetch, Headers as Headers$1 } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/ofetch/dist/node.mjs';
-import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/node-mock-http/dist/index.mjs';
-import { createStorage, prefixStorage } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unstorage/dist/index.mjs';
-import unstorage_47drivers_47fs from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unstorage/drivers/fs.mjs';
-import { digest, hash as hash$1 } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/ohash/dist/index.mjs';
-import { toRouteMatcher, createRouter } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/radix3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, getQuery as getQuery$1, getRequestWebStream, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, readBody, getResponseStatusText } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/h3/dist/index.mjs';
+import { escapeHtml } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/@vue/shared/dist/shared.cjs.js';
+import viteNodeEntry_mjs from 'file:///C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs';
+import { viteNodeFetch } from 'file:///C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/@nuxt/vite-builder/dist/vite-node.mjs';
+import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, parseQuery, parsePath, encodePath, joinRelativeURL } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/ufo/dist/index.mjs';
+import { createHead as createHead$1, propsToString, renderSSRHead } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unhead/dist/server.mjs';
+import { isVNode, isRef, toValue } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/vue/index.mjs';
+import { DeprecationsPlugin } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unhead/dist/legacy.mjs';
+import { PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unhead/dist/plugins.mjs';
+import { klona } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/klona/dist/index.mjs';
+import defu, { defuFn } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/defu/dist/defu.mjs';
+import destr, { destr as destr$1 } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/destr/dist/index.mjs';
+import { snakeCase } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/scule/dist/index.mjs';
+import { defineDiagnostics, createConsoleReporter } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/nostics/dist/index.mjs';
+import { ansiFormatter } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/nostics/dist/formatters/ansi.mjs';
+import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { renderToString } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/vue/server-renderer/index.mjs';
+import { stringify, uneval } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/devalue/index.js';
+import { createHooks } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/nitropack/node_modules/hookable/dist/index.mjs';
+import { createFetch, Headers as Headers$1 } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/ofetch/dist/node.mjs';
+import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/node-mock-http/dist/index.mjs';
+import { createStorage, prefixStorage } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unstorage/dist/index.mjs';
+import unstorage_47drivers_47fs from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unstorage/drivers/fs.mjs';
+import { digest, hash as hash$1 } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/ohash/dist/index.mjs';
+import { toRouteMatcher, createRouter } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/radix3/dist/index.mjs';
 import { readFile } from 'node:fs/promises';
-import consola, { consola as consola$1 } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/consola/dist/index.mjs';
-import { ErrorParser } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/youch-core/build/index.js';
-import { Youch } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/youch/build/index.js';
-import { SourceMapConsumer } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/source-map/source-map.js';
+import consola, { consola as consola$1 } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/consola/dist/index.mjs';
+import { ErrorParser } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/youch-core/build/index.js';
+import { Youch } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/youch/build/index.js';
+import { SourceMapConsumer } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/source-map/source-map.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { getContext } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unctx/dist/index.mjs';
-import { captureRawStackTrace, parseRawStackTrace } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/errx/dist/index.mjs';
-import _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/@nuxt/vite-builder/dist/fix-stacktrace.mjs';
+import { getContext } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unctx/dist/index.mjs';
+import { captureRawStackTrace, parseRawStackTrace } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/errx/dist/index.mjs';
+import _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/@nuxt/vite-builder/dist/fix-stacktrace.mjs';
 import { promises } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname as dirname$1, resolve as resolve$1 } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/pathe/dist/index.mjs';
-import { getIcons } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/@iconify/utils/lib/index.js';
-import { collections } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/.nuxt/nuxt-icon-server-bundle.mjs';
-import { walkResolver } from 'file://C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/node_modules/unhead/dist/utils.mjs';
+import { dirname as dirname$1, resolve as resolve$1 } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/pathe/dist/index.mjs';
+import { getIcons } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/@iconify/utils/lib/index.js';
+import { collections } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/.nuxt/nuxt-icon-server-bundle.mjs';
+import { walkResolver } from 'file://C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/node_modules/unhead/dist/utils.mjs';
 
-const serverAssets = [{"baseName":"server","dir":"C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/server/assets"}];
+const serverAssets = [{"baseName":"server","dir":"C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/server/assets"}];
 
 const assets$1 = createStorage();
 
@@ -56,11 +56,11 @@ const storage = createStorage({});
 
 storage.mount('/assets', assets$1);
 
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend","watchOptions":{"ignored":[null]}}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/server","watchOptions":{"ignored":[null]}}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/.nuxt"}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/.nuxt/cache"}));
-storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend/.data/kv"}));
+storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend","watchOptions":{"ignored":[null]}}));
+storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/server","watchOptions":{"ignored":[null]}}));
+storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/.nuxt"}));
+storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/.nuxt/cache"}));
+storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend/.data/kv"}));
 
 function useStorage(base = "") {
   return base ? prefixStorage(storage, base) : storage;
@@ -2037,7 +2037,7 @@ if (!window.__NUXT_DEVTOOLS_TIME_METRIC__) {
 window.__NUXT_DEVTOOLS_TIME_METRIC__.appInit = Date.now()
 `;
 
-const _hmlk_Z7n1JWTzTkzXv_dsEqBCw48agqWcbY8cYBFmyI = (function(nitro) {
+const _dm_wiZSaSUfxIQ5p6Fppm_Rk57Nd0utAnVw3vMtnINU = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script$1}<\/script>`);
   });
@@ -2106,7 +2106,7 @@ const appSpaLoaderAttrs = {"id":"__nuxt-loader"};
 
 const appId = "nuxt-app";
 
-const rootDir = "C:/Users/ADVAN/Videos/bengkel-ai-agent/frontend";
+const rootDir = "C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend";
 
 //#region src/runtime/plugins/dev-server-logs.ts
 const devReducers = {
@@ -2184,32 +2184,32 @@ function onConsoleLog(callback) {
 
 const script = "\"use strict\";(()=>{const o=window,e=document.documentElement,c=[\"dark\",\"light\"],s=getStorageValue(\"localStorage\",\"nuxt-color-mode\")||\"system\";let r=s===\"system\"?f():s;const l=e.getAttribute(\"data-color-mode-forced\");l&&(r=l),i(r),o[\"__NUXT_COLOR_MODE__\"]={preference:s,value:r,getColorScheme:f,addColorScheme:i,removeColorScheme:d};function i(t){const a=\"\"+t+\"\",n=\"\";e.classList?e.classList.add(a):e.className+=\" \"+a,n&&e.setAttribute(\"data-\"+n,t)}function d(t){const a=\"\"+t+\"\",n=\"\";e.classList?e.classList.remove(a):e.className=e.className.replace(new RegExp(a,\"g\"),\"\"),n&&e.removeAttribute(\"data-\"+n)}function u(t){return o.matchMedia(\"(prefers-color-scheme\"+t+\")\")}function f(){if(o.matchMedia&&u(\"\").media!==\"not all\"){for(const t of c)if(u(\":\"+t).matches)return t}return\"light\"}})();function getStorageValue(o,e){switch(o){case\"localStorage\":try{return window.localStorage.getItem(e)}catch{return null}case\"sessionStorage\":try{return window.sessionStorage.getItem(e)}catch{return null}case\"cookie\":try{return getCookie(e)}catch{return null}default:return null}}function getCookie(o){const c=(\"; \"+window.document.cookie).split(\"; \"+o+\"=\");if(c.length===2){const s=c.pop();return s?s.split(\";\").shift():null}}";
 
-const _TP4xjnxYtOSH9Cl1gSAFSfxt6p3DAL3_ThbrnVZQzQ = (function(nitro) {
+const _L29pEalbZQ3qhcA5w1ks2t4dlg2pqAdnCeUSpL0ySks = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script}<\/script>`);
   });
 });
 
 const plugins = [
-  _hmlk_Z7n1JWTzTkzXv_dsEqBCw48agqWcbY8cYBFmyI,
+  _dm_wiZSaSUfxIQ5p6Fppm_Rk57Nd0utAnVw3vMtnINU,
 dev_server_logs_default,
-_TP4xjnxYtOSH9Cl1gSAFSfxt6p3DAL3_ThbrnVZQzQ,
+_L29pEalbZQ3qhcA5w1ks2t4dlg2pqAdnCeUSpL0ySks,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
 const assets = {
   "/index.mjs": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1d883-bxn+74CFNxRLHi/Ny3Lu2vdh3dg\"",
-    "mtime": "2026-09-01T11:10:20.499Z",
-    "size": 120963,
+    "etag": "\"1e73e-YYLBWS5Q64BAe3KkCtrl6l+3ZqI\"",
+    "mtime": "2026-09-06T12:18:59.622Z",
+    "size": 124734,
     "path": "index.mjs"
   },
   "/index.mjs.map": {
     "type": "application/json",
-    "etag": "\"75bc3-1nsCxwaAlFveKgg5lmxLtqh2grs\"",
-    "mtime": "2026-09-01T11:10:20.499Z",
-    "size": 482243,
+    "etag": "\"74f0d-qGSk5pXdmacHekCB1jOzqBxp8PE\"",
+    "mtime": "2026-09-06T12:18:59.623Z",
+    "size": 478989,
     "path": "index.mjs.map"
   }
 };
@@ -2237,7 +2237,7 @@ function getAsset (id) {
 
 const METHODS = /* @__PURE__ */ new Set(["HEAD", "GET"]);
 const EncodingMap = { gzip: ".gz", br: ".br" };
-const _2VgdaM = eventHandler((event) => {
+const _l4afLK = eventHandler((event) => {
   if (event.method && !METHODS.has(event.method)) {
     return;
   }
@@ -2312,7 +2312,7 @@ function getInstallCommand(pkg) {
   if (ua.startsWith("bun")) return `bun add -D ${pkg}`;
   return `npm i -D ${pkg}`;
 }
-const _AYhxoO = defineCachedEventHandler(async (event) => {
+const _frNWuj = defineCachedEventHandler(async (event) => {
   const collectionName = event.context.params?.collection?.replace(/\.json$/, "");
   const collection = collectionName && Object.hasOwn(collections, collectionName) ? await collections[collectionName]?.() : null;
   const apiEndPoint = options.iconifyApiEndpoint;
@@ -2876,15 +2876,15 @@ async function getIslandContext(event) {
 	};
 }
 
-const _lazy_Al76DS = () => Promise.resolve().then(function () { return renderer; });
+const _lazy_2bbAOc = () => Promise.resolve().then(function () { return renderer; });
 
 const handlers = [
-  { route: '', handler: _2VgdaM, lazy: false, middleware: true, method: undefined },
-  { route: '/__nuxt_error', handler: _lazy_Al76DS, lazy: true, middleware: false, method: undefined },
-  { route: '/api/_nuxt_icon/:collection', handler: _AYhxoO, lazy: false, middleware: false, method: undefined },
+  { route: '', handler: _l4afLK, lazy: false, middleware: true, method: undefined },
+  { route: '/__nuxt_error', handler: _lazy_2bbAOc, lazy: true, middleware: false, method: undefined },
+  { route: '/api/_nuxt_icon/:collection', handler: _frNWuj, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: handler$1, lazy: false, middleware: false, method: undefined },
-  { route: '/_fonts/**', handler: _lazy_Al76DS, lazy: true, middleware: false, method: undefined },
-  { route: '/**', handler: _lazy_Al76DS, lazy: true, middleware: false, method: undefined }
+  { route: '/_fonts/**', handler: _lazy_2bbAOc, lazy: true, middleware: false, method: undefined },
+  { route: '/**', handler: _lazy_2bbAOc, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {

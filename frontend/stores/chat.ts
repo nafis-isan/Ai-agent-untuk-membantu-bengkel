@@ -6,7 +6,7 @@ export const useChatStore = defineStore('chat', () => {
   const config = useRuntimeConfig()
   const messages = ref<Array<{ role: string; content: string }>>([])
   const loading = ref(false)
-  const error = ref(null)
+  const error = ref<string | null>(null)
 
   const sendMessage = async (message: string) => {
     messages.value.push({ role: 'user', content: message })
@@ -20,8 +20,8 @@ export const useChatStore = defineStore('chat', () => {
       
       messages.value.push({ role: 'assistant', content: response.response })
       error.value = null
-    } catch (err) {
-      error.value = err.message
+    } catch (err: any) {
+      error.value = err?.data?.detail || err?.data?.message || err?.message || 'Terjadi kesalahan saat menghubungi server.'
       throw err
     } finally {
       loading.value = false

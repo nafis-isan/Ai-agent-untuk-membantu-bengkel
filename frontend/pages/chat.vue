@@ -86,6 +86,9 @@
               <Icon name="lucide:send" class="h-5 w-5" />
             </button>
           </form>
+          <p v-if="chatStore.error" class="mt-2 text-sm text-rose-600">
+            Gagal mengirim pesan: {{ chatStore.error }}
+          </p>
         </div>
       </div>
 

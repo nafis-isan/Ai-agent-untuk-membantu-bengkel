@@ -1,0 +1,124 @@
+import { t as components_default } from './components-Bfu6e32q.mjs';
+import { u as useRuntimeConfig } from '../virtual/entry.mjs';
+import { defineComponent, ref, watch, mergeProps, unref, nextTick, useSSRContext } from 'vue';
+import { $ as $fetch } from '../_/nitro.mjs';
+import { defineStore } from 'pinia';
+import { ssrRenderAttrs, ssrRenderList, ssrRenderClass, ssrInterpolate, ssrRenderAttr, ssrIncludeBooleanAttr, ssrRenderComponent } from 'vue/server-renderer';
+import '@iconify/vue';
+import '@iconify/utils/lib/css/icon';
+import 'nostics';
+import 'nostics/formatters/ansi';
+import 'unhead/utils';
+import '../routes/renderer.mjs';
+import 'unhead/server';
+import 'unhead/legacy';
+import 'unhead/plugins';
+import 'vue-bundle-renderer/runtime';
+import 'devalue';
+import 'vue-router';
+import '@vue/shared';
+import 'tailwindcss/colors';
+import 'node:http';
+import 'node:https';
+import 'node:events';
+import 'node:buffer';
+import 'node:fs';
+import 'node:path';
+import 'node:crypto';
+import 'node:url';
+import '@iconify/utils';
+import 'consola';
+
+//#region stores/chat.ts
+var useChatStore = defineStore("chat", () => {
+	const config = useRuntimeConfig();
+	const messages = ref([]);
+	const loading = ref(false);
+	const error = ref(null);
+	const sendMessage = async (message) => {
+		messages.value.push({
+			role: "user",
+			content: message
+		});
+		loading.value = true;
+		try {
+			const response = await $fetch(`${config.public.apiBase}/chat/`, {
+				method: "POST",
+				body: { message }
+			});
+			messages.value.push({
+				role: "assistant",
+				content: response.response
+			});
+			error.value = null;
+		} catch (err) {
+			error.value = err?.data?.detail || err?.data?.message || err?.message || "Terjadi kesalahan saat menghubungi server.";
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	};
+	const clearMessages = () => {
+		messages.value = [];
+	};
+	return {
+		messages,
+		loading,
+		error,
+		sendMessage,
+		clearMessages
+	};
+});
+//#endregion
+//#region pages/chat.vue?vue&type=script&setup=true&lang.ts
+var chat_vue_vue_type_script_setup_true_lang_default = /*@__PURE__*/ defineComponent({
+	__name: "chat",
+	__ssrInlineRender: true,
+	setup(__props) {
+		const chatStore = useChatStore();
+		const messageInput = ref("");
+		const chatListRef = ref(null);
+		const scrollToBottom = () => {
+			nextTick(() => {
+				if (chatListRef.value) chatListRef.value.scrollTop = chatListRef.value.scrollHeight;
+			});
+		};
+		watch(() => chatStore.messages.length, () => {
+			scrollToBottom();
+		});
+		watch(() => chatStore.loading, () => {
+			scrollToBottom();
+		});
+		return (_ctx, _push, _parent, _attrs) => {
+			const _component_Icon = components_default;
+			_push(`<div${ssrRenderAttrs(mergeProps({ class: "p-4 md:p-8" }, _attrs))}><div class="mx-auto max-w-5xl"><div class="mb-6 flex items-center justify-between gap-3"><div><p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">AI Assistant</p><h3 class="text-2xl font-bold text-slate-900">Chat BengkelAI</h3></div><div class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> Online </div></div><div class="overflow-hidden rounded-[22px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.06)]"><div class="border-b border-slate-200 bg-slate-50/80 px-5 py-3.5"><div class="flex items-center justify-between gap-3"><div class="flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">AI</div><div><p class="text-sm font-semibold text-slate-800">BengkelAI</p><p class="text-xs text-slate-500">Membantu operasional bengkel</p></div></div></div></div><div class="h-[520px] overflow-y-auto bg-gradient-to-b from-slate-50 via-white to-slate-50 p-4 md:p-6"><div class="space-y-4"><!--[-->`);
+			ssrRenderList(unref(chatStore).messages, (message, index) => {
+				_push(`<div class="${ssrRenderClass([message.role === "user" ? "justify-end" : "justify-start", "flex w-full"])}"><div class="max-w-[80%] md:max-w-[72%]"><div class="${ssrRenderClass([message.role === "user" ? "text-right" : "text-left", "mb-1 text-[10px] font-medium uppercase tracking-wide text-slate-400"])}">${ssrInterpolate(message.role === "user" ? "Anda" : "BengkelAI")}</div><div class="${ssrRenderClass([message.role === "user" ? "bg-blue-600 text-white rounded-br-md" : "bg-slate-200 text-slate-800 rounded-bl-md", "rounded-2xl px-4 py-3 shadow-sm"])}"><p class="text-sm leading-relaxed break-words whitespace-pre-line">${ssrInterpolate(message.content)}</p></div></div></div>`);
+			});
+			_push(`<!--]-->`);
+			if (unref(chatStore).loading) _push(`<div class="flex justify-start"><div class="max-w-[70%]"><div class="mb-1 text-[10px] font-medium uppercase tracking-wide text-slate-400">BengkelAI</div><div class="rounded-2xl rounded-bl-md bg-slate-200 px-4 py-3 text-slate-700 shadow-sm"><div class="flex items-center gap-2"><span class="h-2 w-2 animate-pulse rounded-full bg-slate-500"></span><span class="h-2 w-2 animate-pulse rounded-full bg-slate-500 [animation-delay:120ms]"></span><span class="h-2 w-2 animate-pulse rounded-full bg-slate-500 [animation-delay:240ms]"></span><span class="text-sm text-slate-600">Sedang mengetik...</span></div></div></div></div>`);
+			else _push(`<!---->`);
+			_push(`</div></div><div class="border-t border-slate-200 bg-white/90 p-3 md:p-4"><form class="flex items-center gap-3"><div class="relative flex-1"><input${ssrRenderAttr("value", unref(messageInput))} type="text" placeholder="Tanyakan sesuatu ke BengkelAI..."${ssrIncludeBooleanAttr(unref(chatStore).loading) ? " disabled" : ""} class="h-14 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 pr-12 text-base text-slate-800 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100"></div><button type="submit"${ssrIncludeBooleanAttr(unref(chatStore).loading || !unref(messageInput).trim()) ? " disabled" : ""} class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:send",
+				class: "h-5 w-5"
+			}, null, _parent));
+			_push(`</button></form>`);
+			if (unref(chatStore).error) _push(`<p class="mt-2 text-sm text-rose-600"> Gagal mengirim pesan: ${ssrInterpolate(unref(chatStore).error)}</p>`);
+			else _push(`<!---->`);
+			_push(`</div></div><div class="mt-6"><p class="mb-3 text-sm font-medium text-slate-600">Perintah cepat</p><div class="grid grid-cols-2 gap-3 md:grid-cols-4"><button class="rounded-xl border border-blue-100 bg-blue-50 px-3 py-3 text-left text-sm font-medium text-blue-700 transition hover:border-blue-200 hover:bg-blue-100"> 🔍 Cari Kendaraan </button><button class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-3 text-left text-sm font-medium text-emerald-700 transition hover:border-emerald-200 hover:bg-emerald-100"> 👥 Info Pelanggan </button><button class="rounded-xl border border-amber-100 bg-amber-50 px-3 py-3 text-left text-sm font-medium text-amber-700 transition hover:border-amber-200 hover:bg-amber-100"> 🔧 Servis Hari Ini </button><button class="rounded-xl border border-rose-100 bg-rose-50 px-3 py-3 text-left text-sm font-medium text-rose-700 transition hover:border-rose-200 hover:bg-rose-100"> ⚠️ Stok Rendah </button></div></div></div></div>`);
+		};
+	}
+});
+//#endregion
+//#region pages/chat.vue
+var _sfc_setup = chat_vue_vue_type_script_setup_true_lang_default.setup;
+chat_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
+	const ssrContext = useSSRContext();
+	(ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/chat.vue");
+	return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+var chat_default = chat_vue_vue_type_script_setup_true_lang_default;
+
+export { chat_default as default };
+//# sourceMappingURL=chat-7--MdCz8.mjs.map
