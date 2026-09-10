@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
@@ -91,12 +93,52 @@ def create_service(payload: dict, db: Session) -> dict:
     return {"id": service.id, "vehicle_id": service.vehicle_id, "status": service.status, "complaint": service.complaint, "total_cost": float(service.total_cost)}
 
 
+def prepare_service_status_update(service_id: int, status: str, db: Session) -> dict:
+    service = db.query(ServiceOrder).filter(ServiceOrder.id == service_id).first()
+    if not service:
+        return {"confirmation_required": False, "error": "Service tidak ditemukan."}
+    return {
+        "confirmation_required": True,
+        "message": f"Status servis #{service_id} siap diubah dari {service.status} menjadi {status} setelah konfirmasi pengguna.",
+        "action": {
+            "type": "update_service_status",
+            "label": f"Ubah status servis #{service_id} menjadi {status}",
+            "payload": {"service_id": service_id, "status": status},
+        },
+        "service": {"id": service.id, "status": service.status, "vehicle_id": service.vehicle_id},
+    }
+
+
+def update_service_status(payload: dict, db: Session) -> dict:
+    service = db.query(ServiceOrder).filter(ServiceOrder.id == payload["service_id"]).first()
+    if not service:
+        raise ValueError("Service tidak ditemukan.")
+
+    transitions = {
+        "draft": {"waiting"},
+        "waiting": {"in_progress"},
+        "in_progress": {"completed"},
+    }
+    current_status = service.status.lower()
+    next_status = payload["status"].lower()
+    if next_status not in transitions.get(current_status, set()):
+        raise ValueError(f"Status tidak dapat berubah dari {service.status} menjadi {next_status}.")
+
+    service.status = next_status
+    if next_status == "completed":
+        service.completed_at = datetime.utcnow()
+    db.commit()
+    db.refresh(service)
+    return {"id": service.id, "vehicle_id": service.vehicle_id, "status": service.status}
+
+
 TOOL_DECLARATIONS = [
     {"name": "search_vehicle", "description": "Mencari kendaraan berdasarkan nomor plat.", "parameters": {"type": "OBJECT", "properties": {"plate_number": {"type": "STRING"}}, "required": ["plate_number"]}},
     {"name": "search_customer", "description": "Mencari pelanggan berdasarkan nama atau nomor telepon.", "parameters": {"type": "OBJECT", "properties": {"query": {"type": "STRING"}}, "required": ["query"]}},
     {"name": "check_spareparts", "description": "Mengecek stok suku cadang. Gunakan low_stock_only true untuk stok rendah.", "parameters": {"type": "OBJECT", "properties": {"low_stock_only": {"type": "BOOLEAN"}}, "required": ["low_stock_only"]}},
     {"name": "get_service_history", "description": "Membaca riwayat servis, opsional berdasarkan vehicle_id.", "parameters": {"type": "OBJECT", "properties": {"vehicle_id": {"type": "INTEGER"}}}},
     {"name": "prepare_service_creation", "description": "Menyiapkan order servis untuk konfirmasi pengguna. Tidak menyimpan data.", "parameters": {"type": "OBJECT", "properties": {"vehicle_id": {"type": "INTEGER"}, "complaint": {"type": "STRING"}, "diagnosis": {"type": "STRING"}, "status": {"type": "STRING"}, "total_cost": {"type": "NUMBER"}}, "required": ["vehicle_id", "complaint", "status", "total_cost"]}},
+    {"name": "prepare_service_status_update", "description": "Menyiapkan perubahan status servis untuk konfirmasi pengguna. Gunakan status draft, waiting, in_progress, atau completed.", "parameters": {"type": "OBJECT", "properties": {"service_id": {"type": "INTEGER"}, "status": {"type": "STRING"}}, "required": ["service_id", "status"]}},
 ]
 
 TOOL_FUNCTIONS = {
@@ -105,4 +147,5 @@ TOOL_FUNCTIONS = {
     "check_spareparts": check_spareparts,
     "get_service_history": get_service_history,
     "prepare_service_creation": prepare_service_creation,
+    "prepare_service_status_update": prepare_service_status_update,
 }

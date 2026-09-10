@@ -1,5 +1,7 @@
 """Services API Endpoints"""
 
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -8,6 +10,12 @@ from app.database import models
 from app.database import schemas
 
 router = APIRouter(prefix="/services", tags=["Services"])
+
+STATUS_TRANSITIONS = {
+    "draft": {"waiting"},
+    "waiting": {"in_progress"},
+    "in_progress": {"completed"},
+}
 
 
 @router.get("/", response_model=list[schemas.ServiceOrderResponse])
@@ -58,6 +66,36 @@ async def update_service(service_id: int, service: schemas.ServiceOrderCreate, d
     db_service.status = service.status
     db_service.total_cost = service.total_cost
 
+    db.commit()
+    db.refresh(db_service)
+    return db_service
+
+
+@router.patch("/{service_id}/status", response_model=schemas.ServiceOrderResponse)
+async def update_service_status(
+    service_id: int,
+    status_update: schemas.ServiceStatusUpdate,
+    db: Session = Depends(get_db),
+):
+    """Advance a service order through the workshop workflow."""
+    db_service = db.query(models.ServiceOrder).filter(models.ServiceOrder.id == service_id).first()
+    if not db_service:
+        raise HTTPException(status_code=404, detail="Service tidak ditemukan")
+
+    current_status = db_service.status.lower()
+    next_status = status_update.status.lower()
+    allowed_statuses = set(STATUS_TRANSITIONS) | {"completed"}
+    if next_status not in allowed_statuses:
+        raise HTTPException(status_code=422, detail="Status servis tidak valid")
+    if next_status not in STATUS_TRANSITIONS.get(current_status, set()):
+        raise HTTPException(
+            status_code=409,
+            detail=f"Status tidak dapat berubah dari {db_service.status} menjadi {status_update.status}",
+        )
+
+    db_service.status = next_status
+    if next_status == "completed":
+        db_service.completed_at = datetime.utcnow()
     db.commit()
     db.refresh(db_service)
     return db_service

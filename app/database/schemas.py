@@ -87,6 +87,10 @@ class ServiceOrderCreate(ServiceOrderBase):
     pass
 
 
+class ServiceStatusUpdate(BaseModel):
+    status: str
+
+
 class ServiceOrderResponse(ServiceOrderBase):
     id: int
     created_at: datetime

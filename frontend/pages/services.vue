@@ -115,8 +115,8 @@ const vehicleLabel = (vehicleId: number) => {
 
 const formatDate = (value: string) => new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(value))
 const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value || 0)
-const statusLabel = (status: string) => ({ waiting: 'Menunggu', in_progress: 'Dikerjakan', scheduled: 'Terjadwal', completed: 'Selesai', cancelled: 'Dibatalkan' }[status] || status)
-const statusClass = (status: string) => ({ waiting: 'bg-amber-50 text-amber-700', in_progress: 'bg-blue-50 text-blue-700', scheduled: 'bg-indigo-50 text-indigo-700', completed: 'bg-emerald-50 text-emerald-700', cancelled: 'bg-rose-50 text-rose-700' }[status] || 'bg-slate-100 text-slate-600')
+const statusLabel = (status: string) => ({ draft: 'Draft', waiting: 'Antrean', in_progress: 'Diproses', scheduled: 'Terjadwal', completed: 'Selesai', cancelled: 'Dibatalkan' }[status] || status)
+const statusClass = (status: string) => ({ draft: 'bg-slate-100 text-slate-600', waiting: 'bg-amber-50 text-amber-700', in_progress: 'bg-blue-50 text-blue-700', scheduled: 'bg-indigo-50 text-indigo-700', completed: 'bg-emerald-50 text-emerald-700', cancelled: 'bg-rose-50 text-rose-700' }[status] || 'bg-slate-100 text-slate-600')
 
 const openDetail = (service: any) => {
   selectedService.value = service

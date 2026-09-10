@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.agent.memory import conversation_memory
 from app.agent.prompts import SYSTEM_PROMPT
-from app.agent.tools import TOOL_DECLARATIONS, TOOL_FUNCTIONS, create_service
+from app.agent.tools import TOOL_DECLARATIONS, TOOL_FUNCTIONS, create_service, update_service_status
 
 
 load_dotenv()
@@ -58,6 +58,9 @@ def _call_tools(response: Any, db: Session) -> tuple[list[dict], list[dict]]:
 
 
 def _execute_confirmed_action(action: dict, db: Session) -> str:
+    if action.get("type") == "update_service_status":
+        result = update_service_status(action.get("payload", {}), db)
+        return f"Status servis #{result['id']} berhasil diubah menjadi {result['status']}."
     if action.get("type") != "create_service":
         raise ValueError("Action tidak dikenali.")
     result = create_service(action.get("payload", {}), db)

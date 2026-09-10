@@ -1,134 +1,190 @@
-# Bengkel AI Agent
+# BengkelAI
 
-Sistem AI Agent untuk manajemen bengkel (workshop) yang mengintegrasikan pelanggan, kendaraan, dan layanan.
+Aplikasi manajemen operasional bengkel dengan AI Agent. Backend menyediakan REST API untuk pelanggan, kendaraan, servis, suku cadang, dan insight operasional. Frontend menyediakan dashboard Nuxt untuk mengakses data tersebut serta antarmuka chat berbasis Google Gemini.
 
-## Fitur Utama
+## Fitur
 
-- 🤖 AI Agent untuk memproses permintaan pelanggan
-- 👥 Manajemen data pelanggan
-- 🚗 Tracking kendaraan
-- 🔧 Manajemen layanan dan perbaikan
-- 🗄️ Database SQLite/PostgreSQL
-- 🔌 REST API dengan FastAPI
-- 🐳 Docker & Docker Compose support
+- Dashboard statistik operasional dan insight kondisi bengkel
+- CRUD pelanggan, kendaraan, servis, dan suku cadang
+- AI Agent dengan riwayat percakapan per `session_id`
+- Konfirmasi sebelum AI menyimpan tindakan servis
+- PostgreSQL untuk deployment dan fallback SQLite untuk development lokal
+- Dokumentasi API otomatis dari FastAPI
+
+## Teknologi
+
+- **Backend:** Python 3.12, FastAPI, SQLAlchemy, Pydantic
+- **Database:** PostgreSQL 16
+- **AI:** Google Gemini melalui `google-genai`
+- **Frontend:** Nuxt, Vue 3, Pinia, Nuxt UI, Tailwind CSS
+- **Deployment:** Docker Compose
 
 ## Struktur Proyek
 
 ```
-bengkel-ai-agent/
+.
 ├── app/
-│   ├── agent/          # AI Agent logic
-│   ├── database/       # Database models & schemas
-│   ├── api/            # API endpoints
-│   └── main.py         # Application entry point
-├── .env                # Environment variables
-├── requirements.txt    # Python dependencies
-├── Dockerfile          # Docker configuration
-├── docker-compose.yml  # Docker Compose configuration
-└── README.md          # Documentation
+│   ├── agent/          # Agent Gemini, prompt, memory, dan tools
+│   ├── api/            # Route customers, vehicles, services, spareparts, chat, insights
+│   ├── database/       # Connection, model, schema, inisialisasi, dan seed
+│   └── main.py         # Entry point FastAPI
+├── frontend/
+│   ├── pages/          # Dashboard, customers, vehicles, services, spareparts, chat
+│   ├── stores/         # State management Pinia
+│   ├── composables/    # Integrasi API
+│   └── nuxt.config.ts
+├── tests/              # Test API
+├── .env.example        # Template konfigurasi environment
+├── Dockerfile          # Image backend
+├── docker-compose.yml  # PostgreSQL, backend, dan frontend
+├── requirements.txt
+└── README.md
 ```
 
-## Prerequisites
+## Prasyarat
 
-- Python 3.11+
-- pip atau Poetry
-- Docker & Docker Compose (optional)
+- Python 3.12 atau lebih baru
+- Node.js 22 atau lebih baru dan npm
+- Google Gemini API key untuk fitur chat
+- Docker Desktop dan Docker Compose (opsional)
 
-## Instalasi
+## Menjalankan Secara Lokal
 
-### 1. Clone repository
-```bash
-git clone <repository-url>
-cd bengkel-ai-agent
+### Backend
+
+1. Buat dan aktifkan virtual environment:
+
+	```powershell
+	python -m venv .venv
+	.venv\Scripts\Activate.ps1
+	```
+
+	Untuk Linux/macOS, gunakan `source .venv/bin/activate`.
+
+2. Install dependency dan salin konfigurasi:
+
+	```powershell
+	pip install -r requirements.txt
+	Copy-Item .env.example .env
+	```
+
+3. Isi `GEMINI_API_KEY` di `.env`. Untuk database lokal tanpa PostgreSQL, biarkan konfigurasi PostgreSQL kosong; aplikasi akan memakai `bengkel.db` secara otomatis.
+
+4. Jalankan API:
+
+	```powershell
+	python -m uvicorn app.main:app --reload
+	```
+
+	API tersedia di `http://localhost:8000`. Tabel database dibuat otomatis saat aplikasi dimulai.
+
+### Data contoh (opsional)
+
+Setelah backend dapat terhubung ke database, jalankan:
+
+```powershell
+python -m app.database.seed
 ```
 
-### 2. Setup Virtual Environment
-```bash
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-source .venv/bin/activate  # Linux/Mac
+Perintah ini menambahkan contoh pelanggan, kendaraan, mekanik, dan suku cadang.
+
+### Frontend
+
+Di terminal lain:
+
+```powershell
+cd frontend
+npm install
+npm run dev
 ```
 
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
+Frontend tersedia di `http://localhost:3000`. URL backend dapat diubah melalui `frontend/.env`:
+
+```env
+NUXT_PUBLIC_API_BASE=http://localhost:8000
 ```
 
-### 4. Konfigurasi Environment
-```bash
-cp .env.example .env
-# Edit .env sesuai kebutuhan
+Untuk build production frontend:
+
+```powershell
+npm run build
+npm run preview
 ```
 
-## Menjalankan Aplikasi
+## Menjalankan dengan Docker Compose
 
-### Development Mode
-```bash
-python -m uvicorn app.main:app --reload
+Salin `.env.example` menjadi `.env`, isi `GEMINI_API_KEY`, lalu ubah `POSTGRES_HOST` menjadi `postgres` karena backend berjalan di dalam network Compose:
+
+```env
+GEMINI_API_KEY=your-gemini-api-key
+POSTGRES_DB=bengkel
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
 ```
 
-Server akan berjalan di `http://localhost:8000`
+Jalankan seluruh stack:
 
-### Production Mode
-```bash
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```powershell
+docker compose up --build
 ```
 
-### Menggunakan Docker
-```bash
-docker-compose up -d
+Layanan yang tersedia:
+
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:8000`
+- PostgreSQL: `localhost:5432`
+
+Hentikan container dengan `docker compose down`. Tambahkan `-v` jika ingin menghapus volume database juga.
+
+## API
+
+Dokumentasi interaktif tersedia di:
+
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+Semua endpoint memakai path root berikut, tanpa prefix `/api`:
+
+| Resource | Endpoint |
+| --- | --- |
+| Customers | `GET/POST /customers/`, `GET/PUT/DELETE /customers/{id}` |
+| Vehicles | `GET/POST /vehicles/`, `GET/PUT/DELETE /vehicles/{id}` |
+| Services | `GET/POST /services/`, `GET/PUT/DELETE /services/{id}` |
+| Spareparts | `GET/POST /spareparts/`, `GET/PUT/DELETE /spareparts/{id}` |
+| AI chat | `POST /chat/` |
+| Insights | `GET /insights/` |
+
+Contoh request chat:
+
+```json
+{
+  "message": "Tampilkan servis yang masih menunggu",
+  "session_id": "budi-001"
+}
 ```
-
-## API Documentation
-
-Akses dokumentasi API interaktif:
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-## Endpoints
-
-### Customers
-- `GET /api/customers` - Dapatkan semua pelanggan
-- `GET /api/customers/{id}` - Dapatkan pelanggan spesifik
-- `POST /api/customers` - Buat pelanggan baru
-- `PUT /api/customers/{id}` - Update pelanggan
-- `DELETE /api/customers/{id}` - Hapus pelanggan
-
-### Vehicles
-- `GET /api/vehicles` - Dapatkan semua kendaraan
-- `GET /api/vehicles/{id}` - Dapatkan kendaraan spesifik
-- `POST /api/vehicles` - Buat kendaraan baru
-- `PUT /api/vehicles/{id}` - Update kendaraan
-- `DELETE /api/vehicles/{id}` - Hapus kendaraan
-
-### Services
-- `GET /api/services` - Dapatkan semua layanan
-- `GET /api/services/{id}` - Dapatkan layanan spesifik
-- `POST /api/services` - Buat layanan baru
-- `PUT /api/services/{id}` - Update layanan
-- `DELETE /api/services/{id}` - Hapus layanan
-
-### AI Agent
-- `POST /agent/chat` - Chat dengan AI Agent
 
 ## Testing
 
-```bash
+Pastikan dependency backend sudah ter-install, lalu jalankan:
+
+```powershell
 pytest tests/
 ```
 
-## Contributing
+Test menggunakan database SQLite terpisah di `test_bengkel.db`.
 
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+## Konfigurasi Environment
 
-## License
+| Variabel | Keterangan | Default |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | API key Google Gemini; diperlukan untuk chat | - |
+| `GEMINI_MODEL` | Model Gemini yang digunakan agent | `gemini-3.5-flash` |
+| `POSTGRES_DB` | Nama database PostgreSQL | - |
+| `POSTGRES_USER` | User PostgreSQL | - |
+| `POSTGRES_PASSWORD` | Password PostgreSQL | - |
+| `POSTGRES_HOST` | Host PostgreSQL | `localhost` |
+| `POSTGRES_PORT` | Port PostgreSQL | `5432` |
 
-MIT License - lihat file LICENSE untuk detail
-
-## Support
-
-Untuk pertanyaan dan dukungan, silakan buat issue di repository.
+Jika tiga variabel PostgreSQL (`POSTGRES_DB`, `POSTGRES_USER`, dan `POSTGRES_PASSWORD`) tidak lengkap atau PostgreSQL tidak tersedia, backend memakai SQLite lokal.

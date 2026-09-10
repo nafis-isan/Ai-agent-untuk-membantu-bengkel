@@ -60,13 +60,15 @@ var services_vue_vue_type_script_setup_true_lang_default = /*@__PURE__*/ defineC
 			maximumFractionDigits: 0
 		}).format(value || 0);
 		const statusLabel = (status) => ({
-			waiting: "Menunggu",
-			in_progress: "Dikerjakan",
+			draft: "Draft",
+			waiting: "Antrean",
+			in_progress: "Diproses",
 			scheduled: "Terjadwal",
 			completed: "Selesai",
 			cancelled: "Dibatalkan"
 		})[status] || status;
 		const statusClass = (status) => ({
+			draft: "bg-slate-100 text-slate-600",
 			waiting: "bg-amber-50 text-amber-700",
 			in_progress: "bg-blue-50 text-blue-700",
 			scheduled: "bg-indigo-50 text-indigo-700",
@@ -171,4 +173,4 @@ services_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var services_default = services_vue_vue_type_script_setup_true_lang_default;
 
 export { services_default as default };
-//# sourceMappingURL=services-Vnxg5TUq.mjs.map
+//# sourceMappingURL=services-1xwwtNWQ.mjs.map

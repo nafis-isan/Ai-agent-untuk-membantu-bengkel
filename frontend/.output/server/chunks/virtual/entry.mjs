@@ -1177,7 +1177,7 @@ var virtual_nuxt_node_modules_2F_cache_2Fnuxt_2F_nuxt_2Froutes_default = [
 		name: "services",
 		path: "/services",
 		meta: { layout: "default" },
-		component: () => import('../build/services-Vnxg5TUq.mjs')
+		component: () => import('../build/services-1xwwtNWQ.mjs')
 	},
 	{
 		name: "spareparts",
