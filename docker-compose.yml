@@ -24,6 +24,11 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       GEMINI_API_KEY: ${GEMINI_API_KEY}

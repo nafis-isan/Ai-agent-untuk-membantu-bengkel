@@ -1,0 +1,1 @@
+import{c as e,u as t}from"./BgBd6-BL.js";var n=e(e=>{if(e.path!==`/login`&&!localStorage.getItem(`bengkelai-token`))return t(`/login`)});export{n as default};

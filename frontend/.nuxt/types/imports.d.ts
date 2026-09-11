@@ -5,6 +5,7 @@ declare global {
   const abortNavigation: typeof import('../../node_modules/nuxt/dist/app/composables/router').abortNavigation
   const acceptHMRUpdate: typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables').acceptHMRUpdate
   const addRouteMiddleware: typeof import('../../node_modules/nuxt/dist/app/composables/router').addRouteMiddleware
+  const apiFetch: typeof import('../../composables/useAPI').apiFetch
   const callOnce: typeof import('../../node_modules/nuxt/dist/app/composables/once').callOnce
   const cancelIdleCallback: typeof import('../../node_modules/nuxt/dist/app/compat/idle-callback').cancelIdleCallback
   const clearError: typeof import('../../node_modules/nuxt/dist/app/composables/error').clearError
@@ -106,6 +107,7 @@ declare global {
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config').updateAppConfig
   const useAnnouncer: typeof import('../../node_modules/nuxt/dist/app/composables/announcer').useAnnouncer
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config').useAppConfig
+  const useAppointmentStore: typeof import('../../stores/appointments').useAppointmentStore
   const useAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData').useAsyncData
   const useAttrs: typeof import('vue').useAttrs
   const useAuthStore: typeof import('../../stores/auth').useAuthStore
@@ -237,6 +239,7 @@ declare module 'vue' {
     readonly abortNavigation: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['abortNavigation']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables')['acceptHMRUpdate']>
     readonly addRouteMiddleware: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['addRouteMiddleware']>
+    readonly apiFetch: UnwrapRef<typeof import('../../composables/useAPI')['apiFetch']>
     readonly callOnce: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/once')['callOnce']>
     readonly cancelIdleCallback: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/compat/idle-callback')['cancelIdleCallback']>
     readonly clearError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['clearError']>
@@ -338,6 +341,7 @@ declare module 'vue' {
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
     readonly useAnnouncer: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/announcer')['useAnnouncer']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
+    readonly useAppointmentStore: UnwrapRef<typeof import('../../stores/appointments')['useAppointmentStore']>
     readonly useAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('../../stores/auth')['useAuthStore']>

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.dependencies import get_db
 from app.database.models import Sparepart
 from app.database.schemas import SparepartCreate, SparepartResponse
+from app.auth import require_admin
 
 
 router = APIRouter(
@@ -52,7 +53,8 @@ def get_sparepart(
 )
 def create_sparepart(
     sparepart_data: SparepartCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     sparepart = Sparepart(
         part_number=sparepart_data.part_number,
@@ -77,7 +79,8 @@ def create_sparepart(
 def update_sparepart(
     sparepart_id: int,
     sparepart_data: SparepartCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     sparepart = db.query(Sparepart).filter(Sparepart.id == sparepart_id).first()
     if not sparepart:
@@ -104,7 +107,8 @@ def update_sparepart(
 )
 def delete_sparepart(
     sparepart_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     sparepart = db.query(Sparepart).filter(Sparepart.id == sparepart_id).first()
     if not sparepart:

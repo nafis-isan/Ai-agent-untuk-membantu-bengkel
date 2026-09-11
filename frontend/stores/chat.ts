@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { $fetch } from 'ofetch'
 
 export const useChatStore = defineStore('chat', () => {
   const config = useRuntimeConfig()
@@ -19,12 +18,16 @@ export const useChatStore = defineStore('chat', () => {
     loading.value = true
 
     try {
-      const response = await $fetch(`${config.public.apiBase}/chat/`, {
+      const response = await apiFetch<{ response?: string; actions?: Array<{ type: string; label: string; payload: Record<string, unknown> }> }>(`${config.public.apiBase}/chat/`, {
         method: 'POST',
         body: { message, session_id: sessionId.value || 'default', action }
       })
-      
-      messages.value.push({ role: 'assistant', content: response.response, actions: response.actions || [] })
+
+      messages.value.push({
+        role: 'assistant',
+        content: response.response?.trim() || 'AI tidak mengembalikan teks jawaban. Silakan coba pertanyaan lain.',
+        actions: response.actions || []
+      })
       error.value = null
     } catch (err: any) {
       error.value = err?.data?.detail || err?.data?.message || err?.message || 'Terjadi kesalahan saat menghubungi server.'

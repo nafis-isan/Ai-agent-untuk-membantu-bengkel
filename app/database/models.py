@@ -7,6 +7,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    Boolean,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -228,11 +229,6 @@ class ServiceOrder(Base):
         default=datetime.utcnow
     )
 
-    completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime,
-        nullable=True
-    )
-
     vehicle: Mapped["Vehicle"] = relationship(
         back_populates="service_orders"
     )
@@ -244,6 +240,21 @@ class ServiceOrder(Base):
     service_items: Mapped[list["ServiceItem"]] = relationship(
         back_populates="service_order"
     )
+
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"), nullable=False)
+    vehicle_id: Mapped[int] = mapped_column(ForeignKey("vehicles.id"), nullable=False)
+    scheduled_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    complaint: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(30), default="scheduled", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    customer: Mapped["Customer"] = relationship()
+    vehicle: Mapped["Vehicle"] = relationship()
 
 
 class ServiceItem(Base):
@@ -292,3 +303,22 @@ class AgentMessage(Base):
     role: Mapped[str] = mapped_column(String(20), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class AgentUsage(Base):
+    __tablename__ = "agent_usage"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    model: Mapped[str] = mapped_column(String(100), nullable=False)
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    estimated_cost: Mapped[float] = mapped_column(Numeric(12, 6), default=0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class UsedAction(Base):
+    __tablename__ = "used_actions"
+
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    used_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

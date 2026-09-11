@@ -133,7 +133,7 @@ const chatStore = useChatStore()
 const messageInput = ref('')
 const chatListRef = ref<HTMLElement | null>(null)
 
-const formatMessage = (content: string) => content
+const formatMessage = (content: unknown) => String(content || '')
   .replace(/\*\*(.*?)\*\*/g, '$1')
   .replace(/^\s*[*-]\s+/gm, '')
   .replace(/^\s*#{1,6}\s+/gm, '')
@@ -160,8 +160,8 @@ const sendMessage = async () => {
   }
 }
 
-const confirmAction = async (action: { type: string; label: string; payload: Record<string, unknown> }) => {
-  await chatStore.sendMessage(`Konfirmasi: ${action.label}`, { type: action.type, payload: action.payload })
+const confirmAction = async (action: { type: string; label: string; payload: Record<string, unknown>; confirmation_token: string }) => {
+  await chatStore.sendMessage(`Konfirmasi: ${action.label}`, action)
 }
 
 watch(

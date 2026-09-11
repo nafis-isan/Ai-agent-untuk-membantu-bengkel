@@ -53,6 +53,15 @@
 
             <div class="flex gap-2">
               <button @click="openDetail(service)" class="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700"><Icon name="lucide:eye" class="h-4 w-4" />Lihat Detail</button>
+              <button
+                v-if="nextStatus(service.status)"
+                :disabled="serviceStore.loading"
+                @click="advanceService(service)"
+                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              >
+                <Icon :name="service.status === 'in_progress' ? 'lucide:check-circle-2' : 'lucide:play'" class="h-4 w-4" />
+                {{ nextStatusLabel(service.status) }}
+              </button>
               <button class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-700"><Icon name="lucide:printer" class="h-4 w-4" />Cetak Invoice</button>
             </div>
           </div>
@@ -79,7 +88,7 @@
           <div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Kendaraan</label><select v-model.number="formData.vehicle_id" required class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"><option :value="0" disabled>Pilih kendaraan</option><option v-for="vehicle in vehicleStore.vehicles" :key="vehicle.id" :value="vehicle.id">{{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.plate_number }}</option></select><p v-if="!vehicleStore.vehicles.length" class="mt-1 text-xs text-amber-600">Belum ada kendaraan. Tambahkan kendaraan terlebih dahulu.</p></div>
           <div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Keluhan</label><textarea v-model="formData.complaint" required rows="3" placeholder="Contoh: Mesin sulit dinyalakan saat pagi hari" class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"></textarea></div>
           <div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Diagnosa awal <span class="font-normal text-slate-400">(opsional)</span></label><textarea v-model="formData.diagnosis" rows="2" placeholder="Catatan pemeriksaan awal" class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"></textarea></div>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Status</label><select v-model="formData.status" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"><option value="waiting">Menunggu</option><option value="in_progress">Dikerjakan</option><option value="scheduled">Terjadwal</option></select></div><div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Estimasi biaya</label><input v-model.number="formData.total_cost" type="number" min="0" step="1000" placeholder="0" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50" /></div></div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Status</label><select v-model="formData.status" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"><option value="waiting">Menunggu</option><option value="scheduled">Terjadwal</option></select></div><div><label class="mb-1.5 block text-sm font-semibold text-slate-700">Estimasi biaya</label><input v-model.number="formData.total_cost" type="number" min="0" step="1000" placeholder="0" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50" /></div></div>
           <p v-if="formError" class="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ formError }}</p>
           <div class="flex gap-3 pt-2"><button type="button" class="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50" @click="closeForm">Batal</button><button type="submit" :disabled="serviceStore.loading || !vehicleStore.vehicles.length" class="flex-1 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"><span v-if="serviceStore.loading">Menyimpan...</span><span v-else>Simpan Servis</span></button></div>
         </form>
@@ -117,6 +126,8 @@ const formatDate = (value: string) => new Intl.DateTimeFormat('id-ID', { dateSty
 const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value || 0)
 const statusLabel = (status: string) => ({ draft: 'Draft', waiting: 'Antrean', in_progress: 'Diproses', scheduled: 'Terjadwal', completed: 'Selesai', cancelled: 'Dibatalkan' }[status] || status)
 const statusClass = (status: string) => ({ draft: 'bg-slate-100 text-slate-600', waiting: 'bg-amber-50 text-amber-700', in_progress: 'bg-blue-50 text-blue-700', scheduled: 'bg-indigo-50 text-indigo-700', completed: 'bg-emerald-50 text-emerald-700', cancelled: 'bg-rose-50 text-rose-700' }[status] || 'bg-slate-100 text-slate-600')
+const nextStatus = (status: string) => ({ draft: 'waiting', scheduled: 'waiting', waiting: 'in_progress', in_progress: 'completed' }[status] || '')
+const nextStatusLabel = (status: string) => ({ draft: 'Masukkan Antrean', scheduled: 'Masukkan Antrean', waiting: 'Mulai Servis', in_progress: 'Selesaikan Servis' }[status] || '')
 
 const openDetail = (service: any) => {
   selectedService.value = service
@@ -126,6 +137,19 @@ const openDetail = (service: any) => {
 const closeDetail = () => {
   selectedService.value = null
   showDetail.value = false
+}
+
+const advanceService = async (service: any) => {
+  const status = nextStatus(service.status)
+  if (!status) return
+  if (status === 'completed' && !confirm('Tandai servis ini sebagai selesai?')) return
+
+  try {
+    await serviceStore.updateServiceStatus(service.id, status)
+    if (selectedService.value?.id === service.id) selectedService.value = { ...service, status }
+  } catch (error: any) {
+    formError.value = error?.data?.detail || 'Status servis gagal diperbarui.'
+  }
 }
 
 const openForm = () => {

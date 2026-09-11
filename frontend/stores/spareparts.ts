@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { $fetch } from 'ofetch'
 
 export const useSparepartStore = defineStore('sparepart', () => {
   const config = useRuntimeConfig()
@@ -11,7 +10,7 @@ export const useSparepartStore = defineStore('sparepart', () => {
   const fetchSpareparts = async () => {
     loading.value = true
     try {
-      const response = await $fetch(`${config.public.apiBase}/spareparts/`)
+      const response = await apiFetch(`${config.public.apiBase}/spareparts/`)
       spareparts.value = response
       error.value = null
     } catch (err: any) {
@@ -23,7 +22,7 @@ export const useSparepartStore = defineStore('sparepart', () => {
 
   const createSparepart = async (sparepart: any) => {
     try {
-      const response = await $fetch(`${config.public.apiBase}/spareparts/`, {
+      const response = await apiFetch(`${config.public.apiBase}/spareparts/`, {
         method: 'POST',
         body: sparepart
       })
@@ -37,7 +36,7 @@ export const useSparepartStore = defineStore('sparepart', () => {
 
   const updateSparepart = async (id: number, sparepart: any) => {
     try {
-      const response = await $fetch(`${config.public.apiBase}/spareparts/${id}`, {
+      const response = await apiFetch(`${config.public.apiBase}/spareparts/${id}`, {
         method: 'PUT',
         body: sparepart
       })
@@ -54,7 +53,7 @@ export const useSparepartStore = defineStore('sparepart', () => {
 
   const deleteSparepart = async (id: number) => {
     try {
-      await $fetch(`${config.public.apiBase}/spareparts/${id}`, {
+      await apiFetch(`${config.public.apiBase}/spareparts/${id}`, {
         method: 'DELETE'
       })
       spareparts.value = spareparts.value.filter((item) => item.id !== id)

@@ -52,8 +52,11 @@
           <button @click="openHistory(vehicle)" class="flex-1 text-sm bg-blue-50 text-blue-600 px-3 py-2 rounded hover:bg-blue-100 transition">
             Lihat Riwayat
           </button>
-          <button class="flex-1 text-sm bg-slate-100 text-slate-700 px-3 py-2 rounded hover:bg-slate-200 transition">
+          <button @click="editVehicle(vehicle)" class="flex-1 text-sm bg-slate-100 text-slate-700 px-3 py-2 rounded hover:bg-slate-200 transition">
             Edit
+          </button>
+          <button @click="deleteVehicleHandler(vehicle.id)" class="rounded bg-rose-50 px-3 py-2 text-rose-600 transition hover:bg-rose-100" aria-label="Hapus kendaraan">
+            <Icon name="lucide:trash-2" class="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -69,7 +72,7 @@
     <!-- Form Modal -->
     <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm">
       <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-        <h3 class="text-lg font-bold text-slate-900 mb-4">Tambah Kendaraan</h3>
+        <h3 class="text-lg font-bold text-slate-900 mb-4">{{ editingId ? 'Edit Kendaraan' : 'Tambah Kendaraan' }}</h3>
 
         <form @submit.prevent="submitForm" class="space-y-4">
           <div>
@@ -141,7 +144,7 @@
               type="submit"
               class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
             >
-              Simpan
+              {{ editingId ? 'Simpan Perubahan' : 'Simpan' }}
             </button>
             <button
               type="button"
@@ -168,6 +171,7 @@ const searchQuery = ref('')
 const showForm = ref(false)
 const showHistory = ref(false)
 const selectedVehicle = ref<any | null>(null)
+const editingId = ref<number | null>(null)
 
 const formData = ref({
   brand: '',
@@ -207,8 +211,13 @@ onMounted(async () => {
 
 const submitForm = async () => {
   try {
-    await vehicleStore.createVehicle(formData.value)
+    if (editingId.value) {
+      await vehicleStore.updateVehicle(editingId.value, formData.value)
+    } else {
+      await vehicleStore.createVehicle(formData.value)
+    }
     showForm.value = false
+    editingId.value = null
     formData.value = {
       brand: '',
       model: '',
@@ -217,6 +226,21 @@ const submitForm = async () => {
       vehicle_type: '',
       customer_id: 0
     }
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
+
+const editVehicle = (vehicle: any) => {
+  editingId.value = vehicle.id
+  formData.value = { ...vehicle }
+  showForm.value = true
+}
+
+const deleteVehicleHandler = async (id: number) => {
+  if (!confirm('Apakah Anda yakin ingin menghapus kendaraan ini?')) return
+  try {
+    await vehicleStore.deleteVehicle(id)
   } catch (error) {
     console.error('Error:', error)
   }

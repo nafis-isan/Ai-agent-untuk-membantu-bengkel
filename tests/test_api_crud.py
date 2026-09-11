@@ -1,3 +1,11 @@
+import os
+from uuid import uuid4
+
+os.environ.setdefault("GEMINI_API_KEY", "test-key")
+os.environ.setdefault("ADMIN_USERNAME", "admin")
+os.environ.setdefault("ADMIN_PASSWORD", "test-password")
+os.environ.setdefault("ADMIN_TOKEN_SECRET", "test-secret")
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -26,6 +34,9 @@ def override_get_db():
 
 app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)
+AUTH_HEADERS = {
+    "Authorization": f"Bearer {client.post('/auth/login', json={'username': 'admin', 'password': 'test-password'}).json()['access_token']}"
+}
 
 
 def test_customers_crud_flow():
@@ -37,6 +48,7 @@ def test_customers_crud_flow():
             "email": "budi@example.com",
             "address": "Bandung",
         },
+        headers=AUTH_HEADERS,
     )
     assert create_response.status_code == 201
 
@@ -54,11 +66,12 @@ def test_customers_crud_flow():
             "email": "budi.updated@example.com",
             "address": "Jakarta",
         },
+        headers=AUTH_HEADERS,
     )
     assert update_response.status_code == 200
     assert update_response.json()["name"] == "Budi Updated"
 
-    delete_response = client.delete(f"/customers/{customer_id}")
+    delete_response = client.delete(f"/customers/{customer_id}", headers=AUTH_HEADERS)
     assert delete_response.status_code == 200
     assert delete_response.json()["status"] == "deleted"
 
@@ -72,6 +85,7 @@ def test_vehicles_and_spareparts_can_be_created():
             "email": "ani@example.com",
             "address": "Yogyakarta",
         },
+        headers=AUTH_HEADERS,
     )
     customer_id = customer_response.json()["id"]
 
@@ -85,6 +99,7 @@ def test_vehicles_and_spareparts_can_be_created():
             "year": 2022,
             "vehicle_type": "Mobil Penumpang",
         },
+        headers=AUTH_HEADERS,
     )
     assert vehicle_response.status_code == 201
 
@@ -98,5 +113,28 @@ def test_vehicles_and_spareparts_can_be_created():
             "stock": 10,
             "minimum_stock": 5,
         },
+        headers=AUTH_HEADERS,
     )
     assert sparepart_response.status_code == 201
+
+
+def test_service_items_status_invoice_and_health():
+    suffix = uuid4().hex[:8]
+    customer = client.post("/customers/", json={"name": "Service Test", "phone": suffix}, headers=AUTH_HEADERS).json()
+    vehicle = client.post("/vehicles/", json={"customer_id": customer["id"], "plate_number": f"T {suffix}", "brand": "Honda", "model": "Brio", "year": 2023, "vehicle_type": "Mobil"}, headers=AUTH_HEADERS).json()
+    part = client.post("/spareparts/", json={"part_number": f"P-{suffix}", "name": "Oli", "price": 10000, "stock": 2, "minimum_stock": 1}, headers=AUTH_HEADERS).json()
+    service = client.post("/services/", json={"vehicle_id": vehicle["id"], "complaint": "Ganti oli", "status": "draft"}, headers=AUTH_HEADERS).json()
+
+    item = client.post(f"/services/{service['id']}/items", json={"sparepart_id": part["id"], "quantity": 1}, headers=AUTH_HEADERS)
+    assert item.status_code == 201
+    assert client.get(f"/spareparts/{part['id']}").json()["stock"] == 1
+    invoice = client.get(f"/services/{service['id']}/invoice")
+    assert invoice.status_code == 200
+    assert invoice.json()["total"] == 10000
+
+    illegal = client.patch(f"/services/{service['id']}/status", json={"status": "completed"}, headers=AUTH_HEADERS)
+    assert illegal.status_code == 409
+    for status in ("waiting", "in_progress", "completed"):
+        response = client.patch(f"/services/{service['id']}/status", json={"status": status}, headers=AUTH_HEADERS)
+        assert response.status_code == 200
+    assert client.get("/health").json()["status"] == "ok"

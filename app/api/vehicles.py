@@ -7,6 +7,7 @@ from app.database.schemas import (
     VehicleCreate,
     VehicleResponse,
 )
+from app.auth import require_admin
 
 
 router = APIRouter(
@@ -55,7 +56,8 @@ def get_vehicle(
 )
 def create_vehicle(
     vehicle_data: VehicleCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     customer = (
         db.query(Customer)
@@ -92,7 +94,8 @@ def create_vehicle(
 def update_vehicle(
     vehicle_id: int,
     vehicle_data: VehicleCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not vehicle:
@@ -126,7 +129,8 @@ def update_vehicle(
 )
 def delete_vehicle(
     vehicle_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
     if not vehicle:

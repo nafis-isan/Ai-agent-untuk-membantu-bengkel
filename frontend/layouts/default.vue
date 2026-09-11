@@ -49,7 +49,7 @@
           <div class="flex items-center gap-2 md:gap-4">
             <button class="relative rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" aria-label="Notifikasi"><Icon name="lucide:bell" class="h-5 w-5" /><span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-blue-600 ring-2 ring-white"></span></button>
             <div class="hidden h-7 w-px bg-slate-200 md:block"></div>
-            <button class="flex items-center gap-2 rounded-xl p-1.5 pr-2 transition hover:bg-slate-50"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-xs font-bold text-blue-700">AD</span><span class="hidden text-left md:block"><span class="block text-xs font-bold text-slate-800">Admin Bengkel</span><span class="block text-[10px] text-slate-400">Administrator</span></span><Icon name="lucide:chevron-down" class="hidden h-4 w-4 text-slate-400 md:block" /></button>
+            <button class="flex items-center gap-2 rounded-xl p-1.5 pr-2 transition hover:bg-slate-50" aria-label="Keluar" title="Keluar" @click="logout"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-xs font-bold text-blue-700">AD</span><span class="hidden text-left md:block"><span class="block text-xs font-bold text-slate-800">Admin Bengkel</span><span class="block text-[10px] text-slate-400">Administrator</span></span><Icon name="lucide:log-out" class="h-4 w-4 text-slate-400" /></button>
           </div>
         </div>
       </header>
@@ -60,12 +60,14 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const auth = useAuthStore()
 const mobileOpen = ref(false)
 const navItems = [
   { to: '/', label: 'Dashboard', icon: 'lucide:layout-dashboard' },
   { to: '/customers', label: 'Pelanggan', icon: 'lucide:users' },
   { to: '/vehicles', label: 'Kendaraan', icon: 'lucide:car-front' },
   { to: '/services', label: 'Layanan', icon: 'lucide:wrench' },
+  { to: '/appointments', label: 'Appointment', icon: 'lucide:calendar-days' },
   { to: '/spareparts', label: 'Suku Cadang', icon: 'lucide:package' },
   { to: '/chat', label: 'AI Assistant', icon: 'lucide:message-circle' }
 ]
@@ -76,6 +78,7 @@ const pageTitle = computed(() => {
     '/customers': 'Manajemen Pelanggan',
     '/vehicles': 'Tracking Kendaraan',
     '/services': 'Riwayat Servis',
+    '/appointments': 'Appointment',
     '/spareparts': 'Manajemen Suku Cadang',
     '/chat': 'AI Assistant'
   }
@@ -83,6 +86,11 @@ const pageTitle = computed(() => {
 })
 
 watch(() => route.path, () => { mobileOpen.value = false })
+
+const logout = async () => {
+  auth.logout()
+  await navigateTo('/login')
+}
 </script>
 
 <style scoped>

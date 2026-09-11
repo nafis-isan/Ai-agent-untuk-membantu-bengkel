@@ -33,7 +33,8 @@ export { requestIdleCallback, cancelIdleCallback } from '#app/compat/idle-callba
 export { setInterval } from '#app/compat/interval';
 export { definePageMeta, PageMeta } from '#app/composables/pages';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
-export { useFetchAPI } from '../composables/useAPI';
+export { apiFetch, useFetchAPI } from '../composables/useAPI';
+export { useAppointmentStore } from '../stores/appointments';
 export { useAuthStore } from '../stores/auth';
 export { useChatStore } from '../stores/chat';
 export { useCustomerStore } from '../stores/customers';

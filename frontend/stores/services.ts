@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { $fetch } from 'ofetch'
 
 export const useServiceStore = defineStore('service', () => {
   const config = useRuntimeConfig()
@@ -11,7 +10,7 @@ export const useServiceStore = defineStore('service', () => {
   const fetchServices = async () => {
     loading.value = true
     try {
-      const response = await $fetch(`${config.public.apiBase}/services/`)
+      const response = await apiFetch(`${config.public.apiBase}/services/`)
       services.value = response
       error.value = null
     } catch (err: any) {
@@ -24,7 +23,7 @@ export const useServiceStore = defineStore('service', () => {
   const createService = async (service: any) => {
     loading.value = true
     try {
-      const response = await $fetch(`${config.public.apiBase}/services/`, {
+      const response = await apiFetch(`${config.public.apiBase}/services/`, {
         method: 'POST',
         body: service
       })
@@ -39,11 +38,31 @@ export const useServiceStore = defineStore('service', () => {
     }
   }
 
+  const updateServiceStatus = async (id: number, status: string) => {
+    loading.value = true
+    try {
+      const response = await apiFetch(`${config.public.apiBase}/services/${id}/status`, {
+        method: 'PATCH',
+        body: { status }
+      })
+      const index = services.value.findIndex((service) => service.id === id)
+      if (index > -1) services.value[index] = response
+      error.value = null
+      return response
+    } catch (err: any) {
+      error.value = err?.data?.detail || err?.message || 'Error updating service status'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     services,
     loading,
     error,
     fetchServices,
-    createService
+    createService,
+    updateServiceStatus
   }
 })

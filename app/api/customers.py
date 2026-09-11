@@ -7,6 +7,7 @@ from app.database.schemas import (
     CustomerCreate,
     CustomerResponse,
 )
+from app.auth import require_admin
 
 
 router = APIRouter(
@@ -55,7 +56,8 @@ def get_customer(
 )
 def create_customer(
     customer_data: CustomerCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     customer = Customer(
         name=customer_data.name,
@@ -78,7 +80,8 @@ def create_customer(
 def update_customer(
     customer_id: int,
     customer_data: CustomerCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
@@ -103,7 +106,8 @@ def update_customer(
 )
 def delete_customer(
     customer_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: str = Depends(require_admin),
 ):
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:

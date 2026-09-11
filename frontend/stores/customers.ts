@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { $fetch } from 'ofetch'
 
 export const useCustomerStore = defineStore('customer', () => {
   const config = useRuntimeConfig()
@@ -11,7 +10,7 @@ export const useCustomerStore = defineStore('customer', () => {
   const fetchCustomers = async () => {
     loading.value = true
     try {
-      const response = await $fetch(`${config.public.apiBase}/customers`)
+      const response = await apiFetch(`${config.public.apiBase}/customers/`)
       customers.value = response
       error.value = null
     } catch (err) {
@@ -23,7 +22,7 @@ export const useCustomerStore = defineStore('customer', () => {
 
   const createCustomer = async (customer: any) => {
     try {
-      const response = await $fetch(`${config.public.apiBase}/customers`, {
+      const response = await apiFetch(`${config.public.apiBase}/customers/`, {
         method: 'POST',
         body: customer
       })
@@ -37,7 +36,7 @@ export const useCustomerStore = defineStore('customer', () => {
 
   const updateCustomer = async (id: number, customer: any) => {
     try {
-      const response = await $fetch(`${config.public.apiBase}/customers/${id}`, {
+      const response = await apiFetch(`${config.public.apiBase}/customers/${id}`, {
         method: 'PUT',
         body: customer
       })
@@ -54,7 +53,7 @@ export const useCustomerStore = defineStore('customer', () => {
 
   const deleteCustomer = async (id: number) => {
     try {
-      await $fetch(`${config.public.apiBase}/customers/${id}`, {
+      await apiFetch(`${config.public.apiBase}/customers/${id}`, {
         method: 'DELETE'
       })
       customers.value = customers.value.filter(c => c.id !== id)
