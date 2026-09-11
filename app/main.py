@@ -12,7 +12,6 @@ from app.api.services import router as service_router
 from app.api.chat import router as chat_router
 from app.api.insights import router as insights_router
 from app.api.appointments import router as appointment_router
-from app.api.whatsapp import router as whatsapp_router
 from app.database.init_db import init_database
 from app.database.models import AgentUsage
 from app.database.dependencies import get_db
@@ -49,7 +48,6 @@ app.include_router(service_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
 app.include_router(appointment_router)
-app.include_router(whatsapp_router)
 app.include_router(auth_router)
 
 

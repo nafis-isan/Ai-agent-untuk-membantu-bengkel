@@ -125,7 +125,6 @@ This workflow reduces manual effort and supports faster service response.
 - Integration with real workshop workflows may require customization
 
 ### Future Improvements
-- Integration with WhatsApp or Telegram
 - AI-based predictive maintenance
 - Mobile application support
 - Advanced analytics and dashboards
