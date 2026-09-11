@@ -1,0 +1,175 @@
+import { t as components_default } from './components-CGtk4XIN.mjs';
+import { u as useRuntimeConfig } from '../virtual/entry.mjs';
+import { a as apiFetch } from './useAPI-DRNp7d_T.mjs';
+import { u as useCustomerStore } from './customers-DMXT0ivR.mjs';
+import { u as useVehicleStore } from './vehicles-D-50B4Vh.mjs';
+import { defineComponent, ref, mergeProps, unref, useSSRContext } from 'vue';
+import { defineStore } from 'pinia';
+import { ssrRenderAttrs, ssrRenderComponent, ssrInterpolate, ssrRenderList, ssrRenderClass, ssrRenderAttr, ssrIncludeBooleanAttr, ssrLooseContain, ssrLooseEqual } from 'vue/server-renderer';
+import '../_/nitro.mjs';
+import 'node:http';
+import 'node:https';
+import 'node:events';
+import 'node:buffer';
+import 'node:fs';
+import 'node:path';
+import 'node:crypto';
+import 'node:url';
+import '@iconify/utils';
+import 'consola';
+import '@iconify/vue';
+import '@iconify/utils/lib/css/icon';
+import 'nostics';
+import 'nostics/formatters/ansi';
+import '../routes/renderer.mjs';
+import 'unhead/server';
+import 'unhead/legacy';
+import 'unhead/plugins';
+import 'vue-bundle-renderer/runtime';
+import 'devalue';
+import 'vue-router';
+import '@vue/shared';
+import 'tailwindcss/colors';
+import 'unhead/utils';
+
+//#region stores/appointments.ts
+var useAppointmentStore = defineStore("appointment", () => {
+	const config = useRuntimeConfig();
+	const appointments = ref([]);
+	const loading = ref(false);
+	const error = ref(null);
+	const fetchAppointments = async () => {
+		loading.value = true;
+		try {
+			appointments.value = await apiFetch(`${config.public.apiBase}/appointments/`);
+			error.value = null;
+		} catch (err) {
+			error.value = err?.data?.detail || err?.message || "Appointment gagal dimuat";
+		} finally {
+			loading.value = false;
+		}
+	};
+	const createAppointment = async (payload) => {
+		loading.value = true;
+		try {
+			const result = await apiFetch(`${config.public.apiBase}/appointments/`, {
+				method: "POST",
+				body: payload
+			});
+			appointments.value.push(result);
+			return result;
+		} catch (err) {
+			error.value = err?.data?.detail || err?.message || "Appointment gagal dibuat";
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	};
+	const updateStatus = async (id, status) => {
+		const result = await apiFetch(`${config.public.apiBase}/appointments/${id}/status`, {
+			method: "PATCH",
+			body: { status }
+		});
+		const index = appointments.value.findIndex((item) => item.id === id);
+		if (index > -1) appointments.value[index] = result;
+		return result;
+	};
+	return {
+		appointments,
+		loading,
+		error,
+		fetchAppointments,
+		createAppointment,
+		updateStatus
+	};
+});
+//#endregion
+//#region pages/appointments.vue?vue&type=script&setup=true&lang.ts
+var appointments_vue_vue_type_script_setup_true_lang_default = /*@__PURE__*/ defineComponent({
+	__name: "appointments",
+	__ssrInlineRender: true,
+	setup(__props) {
+		const appointmentStore = useAppointmentStore();
+		const customerStore = useCustomerStore();
+		const vehicleStore = useVehicleStore();
+		const showForm = ref(false);
+		const form = ref({
+			customer_id: 0,
+			vehicle_id: 0,
+			scheduled_at: "",
+			complaint: "",
+			status: "scheduled"
+		});
+		const vehicleLabel = (id) => {
+			const item = vehicleStore.vehicles.find((vehicle) => vehicle.id === id);
+			return item ? `${item.brand} ${item.model} - ${item.plate_number}` : `Kendaraan #${id}`;
+		};
+		const formatDate = (value) => new Intl.DateTimeFormat("id-ID", {
+			dateStyle: "full",
+			timeStyle: "short"
+		}).format(new Date(value));
+		const statusClass = (status) => ({
+			scheduled: "bg-amber-50 text-amber-700",
+			confirmed: "bg-emerald-50 text-emerald-700",
+			cancelled: "bg-rose-50 text-rose-700",
+			completed: "bg-blue-50 text-blue-700"
+		})[status] || "bg-slate-100 text-slate-600";
+		return (_ctx, _push, _parent, _attrs) => {
+			const _component_Icon = components_default;
+			_push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-6" }, _attrs))}><div class="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p class="mb-2 text-sm font-semibold text-blue-600">Jadwal bengkel</p><h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Appointment</h2><p class="mt-2 text-sm text-slate-500">Atur jadwal kedatangan pelanggan sebelum servis dimulai.</p></div><button class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700">`);
+			_push(ssrRenderComponent(_component_Icon, {
+				name: "lucide:calendar-plus",
+				class: "h-4 w-4"
+			}, null, _parent));
+			_push(`Buat Appointment</button></div>`);
+			if (unref(appointmentStore).error) _push(`<div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">${ssrInterpolate(unref(appointmentStore).error)}</div>`);
+			else _push(`<!---->`);
+			if (unref(appointmentStore).loading && !unref(appointmentStore).appointments.length) _push(`<div class="h-40 animate-pulse rounded-2xl bg-white"></div>`);
+			else if (!unref(appointmentStore).appointments.length) {
+				_push(`<div class="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">`);
+				_push(ssrRenderComponent(_component_Icon, {
+					name: "lucide:calendar-days",
+					class: "mx-auto h-8 w-8 text-slate-400"
+				}, null, _parent));
+				_push(`<p class="mt-3 font-bold text-slate-800">Belum ada appointment</p></div>`);
+			} else {
+				_push(`<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white"><!--[-->`);
+				ssrRenderList(unref(appointmentStore).appointments, (item) => {
+					_push(`<div class="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 last:border-0 md:flex-row md:items-center"><div><p class="font-bold text-slate-900">${ssrInterpolate(vehicleLabel(item.vehicle_id))}</p><p class="mt-1 text-sm text-slate-500">${ssrInterpolate(item.complaint)}</p><p class="mt-1 text-xs text-slate-400">${ssrInterpolate(formatDate(item.scheduled_at))}</p></div><div class="flex items-center gap-3"><span class="${ssrRenderClass([statusClass(item.status), "rounded-full px-3 py-1 text-xs font-bold"])}">${ssrInterpolate(item.status)}</span>`);
+					if (item.status === "scheduled") _push(`<button class="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700">Konfirmasi</button>`);
+					else _push(`<!---->`);
+					if (["scheduled", "confirmed"].includes(item.status)) _push(`<button class="rounded-lg bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100">Batalkan</button>`);
+					else _push(`<!---->`);
+					_push(`</div></div>`);
+				});
+				_push(`<!--]--></div>`);
+			}
+			if (unref(showForm)) {
+				_push(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4"><div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl"><div class="mb-5 flex items-start justify-between"><div><p class="text-xs font-semibold text-blue-600">Jadwal baru</p><h3 class="mt-1 text-xl font-extrabold text-slate-900">Buat Appointment</h3></div><button aria-label="Tutup" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100">`);
+				_push(ssrRenderComponent(_component_Icon, { name: "lucide:x" }, null, _parent));
+				_push(`</button></div><form class="space-y-4"><label class="block text-sm font-semibold text-slate-700">Pelanggan<select required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-3"><option${ssrRenderAttr("value", 0)} disabled${ssrIncludeBooleanAttr(Array.isArray(unref(form).customer_id) ? ssrLooseContain(unref(form).customer_id, 0) : ssrLooseEqual(unref(form).customer_id, 0)) ? " selected" : ""}>Pilih pelanggan</option><!--[-->`);
+				ssrRenderList(unref(customerStore).customers, (customer) => {
+					_push(`<option${ssrRenderAttr("value", customer.id)}${ssrIncludeBooleanAttr(Array.isArray(unref(form).customer_id) ? ssrLooseContain(unref(form).customer_id, customer.id) : ssrLooseEqual(unref(form).customer_id, customer.id)) ? " selected" : ""}>${ssrInterpolate(customer.name)} - ${ssrInterpolate(customer.phone)}</option>`);
+				});
+				_push(`<!--]--></select></label><label class="block text-sm font-semibold text-slate-700">Kendaraan<select required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-3"><option${ssrRenderAttr("value", 0)} disabled${ssrIncludeBooleanAttr(Array.isArray(unref(form).vehicle_id) ? ssrLooseContain(unref(form).vehicle_id, 0) : ssrLooseEqual(unref(form).vehicle_id, 0)) ? " selected" : ""}>Pilih kendaraan</option><!--[-->`);
+				ssrRenderList(unref(vehicleStore).vehicles, (vehicle) => {
+					_push(`<option${ssrRenderAttr("value", vehicle.id)}${ssrIncludeBooleanAttr(Array.isArray(unref(form).vehicle_id) ? ssrLooseContain(unref(form).vehicle_id, vehicle.id) : ssrLooseEqual(unref(form).vehicle_id, vehicle.id)) ? " selected" : ""}>${ssrInterpolate(vehicle.brand)} ${ssrInterpolate(vehicle.model)} - ${ssrInterpolate(vehicle.plate_number)}</option>`);
+				});
+				_push(`<!--]--></select></label><label class="block text-sm font-semibold text-slate-700">Waktu<input${ssrRenderAttr("value", unref(form).scheduled_at)} type="datetime-local" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-3"></label><label class="block text-sm font-semibold text-slate-700">Keluhan<textarea required rows="3" class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-3" placeholder="Keluhan pelanggan">${ssrInterpolate(unref(form).complaint)}</textarea></label><div class="flex gap-3"><button type="button" class="flex-1 rounded-xl border border-slate-200 px-4 py-3 font-bold">Batal</button><button type="submit"${ssrIncludeBooleanAttr(unref(appointmentStore).loading) ? " disabled" : ""} class="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-bold text-white disabled:bg-slate-300">Simpan</button></div></form></div></div>`);
+			} else _push(`<!---->`);
+			_push(`</div>`);
+		};
+	}
+});
+//#endregion
+//#region pages/appointments.vue
+var _sfc_setup = appointments_vue_vue_type_script_setup_true_lang_default.setup;
+appointments_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
+	const ssrContext = useSSRContext();
+	(ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/appointments.vue");
+	return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+var appointments_default = appointments_vue_vue_type_script_setup_true_lang_default;
+
+export { appointments_default as default };
+//# sourceMappingURL=appointments-BiBs1ySJ.mjs.map

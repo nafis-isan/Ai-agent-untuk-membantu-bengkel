@@ -1,0 +1,70 @@
+import { u as useRuntimeConfig } from '../virtual/entry.mjs';
+import { a as apiFetch } from './useAPI-DRNp7d_T.mjs';
+import { ref } from 'vue';
+import { defineStore } from 'pinia';
+
+//#region stores/services.ts
+var useServiceStore = defineStore("service", () => {
+	const config = useRuntimeConfig();
+	const services = ref([]);
+	const loading = ref(false);
+	const error = ref(null);
+	const fetchServices = async () => {
+		loading.value = true;
+		try {
+			const response = await apiFetch(`${config.public.apiBase}/services/`);
+			services.value = response;
+			error.value = null;
+		} catch (err) {
+			error.value = err?.message || "Error fetching services";
+		} finally {
+			loading.value = false;
+		}
+	};
+	const createService = async (service) => {
+		loading.value = true;
+		try {
+			const response = await apiFetch(`${config.public.apiBase}/services/`, {
+				method: "POST",
+				body: service
+			});
+			services.value.unshift(response);
+			error.value = null;
+			return response;
+		} catch (err) {
+			error.value = err?.data?.detail || err?.message || "Error creating service";
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	};
+	const updateServiceStatus = async (id, status) => {
+		loading.value = true;
+		try {
+			const response = await apiFetch(`${config.public.apiBase}/services/${id}/status`, {
+				method: "PATCH",
+				body: { status }
+			});
+			const index = services.value.findIndex((service) => service.id === id);
+			if (index > -1) services.value[index] = response;
+			error.value = null;
+			return response;
+		} catch (err) {
+			error.value = err?.data?.detail || err?.message || "Error updating service status";
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	};
+	return {
+		services,
+		loading,
+		error,
+		fetchServices,
+		createService,
+		updateServiceStatus
+	};
+});
+
+export { useServiceStore as u };
+//# sourceMappingURL=services-BhnTR1CI.mjs.map
