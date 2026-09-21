@@ -1,0 +1,9 @@
+//#region layouts/default.vue?vue&type=style&index=0&scoped=8cc37f99&inline&used&lang.css
+var default_vue_vue_type_style_index_0_scoped_8cc37f99_inline_used_lang_default = ".sidebar-link[data-v-8cc37f99]{color:#a7b2ad;border-radius:.4rem;align-items:center;gap:.75rem;padding:.75rem;font-size:.875rem;font-weight:600;transition:all .18s ease-in-out;display:flex}.sidebar-link[data-v-8cc37f99]:hover{color:#fff;background:#26353a}.sidebar-link-active[data-v-8cc37f99]{color:#172126;background:#e9b949;box-shadow:3px 3px #0f7771}";
+
+const defaultStyles_Ngk3BKHi = [
+  default_vue_vue_type_style_index_0_scoped_8cc37f99_inline_used_lang_default
+];
+
+export { defaultStyles_Ngk3BKHi as default };
+//# sourceMappingURL=default-styles.Ngk3BKHi.mjs.map

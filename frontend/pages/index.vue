@@ -1,28 +1,28 @@
 <template>
-  <div class="space-y-8">
+  <div class="space-y-7">
     <section class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-      <div><p class="mb-2 text-sm font-semibold text-blue-600">Selamat datang kembali, Admin</p><h2 class="text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">Ringkasan bengkel</h2><p class="mt-2 text-sm text-slate-500">Pantau aktivitas dan kondisi operasional bengkel Anda hari ini.</p></div>
-      <NuxtLink to="/services" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-700"><Icon name="lucide:plus" class="h-4 w-4" />Tambah Servis</NuxtLink>
+      <div><p class="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#0f7771]">Senin, 21 September 2026 / Shift pagi</p><h2 class="text-4xl font-bold text-[#172126] md:text-5xl">Meja kerja bengkel.</h2><p class="mt-2 max-w-xl text-sm text-[#6e7a7d]">Satu pandangan untuk antrean, kendaraan, dan suku cadang yang perlu dibereskan hari ini.</p></div>
+      <NuxtLink to="/services" class="inline-flex items-center justify-center gap-2 rounded-md bg-[#d96b35] px-4 py-3 text-sm font-bold text-white shadow-[4px_4px_0_#172126] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#172126]"><Icon name="lucide:plus" class="h-4 w-4" />Tambah servis</NuxtLink>
     </section>
 
     <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <div v-for="stat in statCards" :key="stat.label" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgb(15_23_42/0.03)] transition hover:-translate-y-0.5 hover:shadow-md">
-        <div class="flex items-start justify-between"><div class="flex h-10 w-10 items-center justify-center rounded-xl" :class="stat.iconBg"><Icon :name="stat.icon" class="h-5 w-5" :class="stat.iconColor" /></div><span class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">Aktif</span></div>
-        <p class="mt-5 text-sm font-medium text-slate-500">{{ stat.label }}</p><p class="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">{{ stat.value }}</p><p class="mt-2 text-xs text-slate-400">{{ stat.note }}</p>
+      <div v-for="stat in statCards" :key="stat.label" class="border border-[#d9d8d1] bg-[#fbfaf6] p-5 transition hover:-translate-y-0.5 hover:border-[#0f7771] hover:shadow-[4px_4px_0_#d9d8d1]">
+        <div class="flex items-start justify-between"><div class="flex h-10 w-10 items-center justify-center rounded-md" :class="stat.iconBg"><Icon :name="stat.icon" class="h-5 w-5" :class="stat.iconColor" /></div><span class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0f7771]">Live</span></div>
+        <p class="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-[#6e7a7d]">{{ stat.label }}</p><p class="mt-1 text-4xl font-bold text-[#172126]">{{ stat.value }}</p><p class="mt-2 text-xs text-[#8a9694]">{{ stat.note }}</p>
       </div>
     </section>
 
-    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgb(15_23_42/0.03)] md:p-6">
-      <div class="flex items-center justify-between"><div><h3 class="text-base font-bold text-slate-900">Insight operasional</h3><p class="mt-1 text-xs text-slate-400">Ringkasan otomatis dari kondisi database bengkel</p></div><Icon name="lucide:sparkles" class="h-5 w-5 text-blue-500" /></div>
+    <section class="border-l-4 border-[#e9b949] bg-[#172126] p-5 text-white md:p-6">
+      <div class="flex items-center justify-between"><div><h3 class="text-xl font-bold">Catatan operasional</h3><p class="mt-1 text-xs text-[#a7b2ad]">Ringkasan dari kondisi database bengkel</p></div><Icon name="lucide:clipboard-list" class="h-5 w-5 text-[#e9b949]" /></div>
       <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3"><div v-for="insight in insights" :key="insight.type" class="rounded-xl border p-4" :class="insightClass(insight.tone)"><div class="flex items-start gap-3"><Icon :name="insightIcon(insight.type)" class="mt-0.5 h-4 w-4 shrink-0" /><div><p class="text-sm font-bold">{{ insight.title }}</p><p class="mt-1 text-xs leading-5 opacity-80">{{ insight.description }}</p></div></div></div></div>
     </section>
 
     <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_0.65fr]">
-      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_20px_rgb(15_23_42/0.03)] md:p-6">
+      <div class="border border-[#d9d8d1] bg-[#fbfaf6] p-5 md:p-6">
         <div class="flex items-center justify-between"><div><h3 class="text-base font-bold text-slate-900">Ringkasan servis</h3><p class="mt-1 text-xs text-slate-400">Aktivitas servis dalam 6 periode terakhir</p></div><button class="rounded-lg p-2 text-slate-400 hover:bg-slate-50"><Icon name="lucide:more-horizontal" class="h-5 w-5" /></button></div>
         <div class="mt-8 flex h-48 items-end justify-between gap-3 border-b border-l border-slate-200 px-2 pb-0 pt-4"><div v-for="(height, index) in chartBars" :key="index" class="flex h-full flex-1 flex-col items-center justify-end gap-2"><div class="w-full max-w-10 rounded-t-lg bg-blue-500 transition hover:bg-blue-600" :style="{ height: `${height}%` }"></div><span class="text-[10px] text-slate-400">{{ chartLabels[index] }}</span></div></div>
       </div>
-      <div class="rounded-2xl bg-slate-900 p-6 text-white"><div class="flex items-center gap-2 text-blue-300"><Icon name="lucide:activity" class="h-4 w-4" /><span class="text-xs font-bold uppercase tracking-wider">Operasional</span></div><h3 class="mt-6 text-xl font-extrabold">Semua terlihat terkendali.</h3><p class="mt-2 text-sm leading-6 text-slate-400">Jaga stok dan pantau antrean servis agar pelanggan mendapat layanan terbaik.</p><div class="mt-8 grid grid-cols-2 gap-3"><div class="rounded-xl bg-white/10 p-3"><p class="text-2xl font-extrabold">{{ stats.services }}</p><p class="mt-1 text-[11px] text-slate-400">Servis aktif</p></div><div class="rounded-xl bg-white/10 p-3"><p class="text-2xl font-extrabold">{{ stats.lowStock }}</p><p class="mt-1 text-[11px] text-slate-400">Perlu restock</p></div></div></div>
+      <div class="bg-[#0f7771] p-6 text-white"><div class="flex items-center gap-2 text-[#e9b949]"><Icon name="lucide:activity" class="h-4 w-4" /><span class="text-xs font-bold uppercase tracking-wider">Operasional</span></div><h3 class="mt-6 text-2xl font-bold">Bengkel bergerak.</h3><p class="mt-2 text-sm leading-6 text-[#d4e2dc]">Jaga stok dan antrean supaya pekerjaan berikutnya tidak tertahan.</p><div class="mt-8 grid grid-cols-2 gap-3"><div class="border border-white/20 bg-white/10 p-3"><p class="text-3xl font-bold">{{ stats.services }}</p><p class="mt-1 text-[11px] text-[#d4e2dc]">Servis aktif</p></div><div class="border border-white/20 bg-white/10 p-3"><p class="text-3xl font-bold">{{ stats.lowStock }}</p><p class="mt-1 text-[11px] text-[#d4e2dc]">Perlu restock</p></div></div></div>
     </section>
 
     <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_0.65fr]">

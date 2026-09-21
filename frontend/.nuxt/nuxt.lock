@@ -1,0 +1,9 @@
+{
+  "pid": 7600,
+  "startedAt": 1789967533872,
+  "command": "dev",
+  "cwd": "C:/Users/ADVAN/Videos/Ai-agent-untuk-membantu-bengkel/frontend",
+  "port": 3000,
+  "hostname": "::1",
+  "url": "http://[::1]:3000"
+}

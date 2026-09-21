@@ -1,17 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+:root {
+  --ink: #172126;
+  --muted: #6e7a7d;
+  --paper: #f3f1eb;
+  --panel: #fbfaf6;
+  --line: #d9d8d1;
+  --teal: #0f7771;
+  --yellow: #e9b949;
+  --orange: #d96b35;
+}
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-[#f6f8fb] text-slate-900 antialiased;
+  @apply text-slate-900 antialiased;
+  background-color: var(--paper);
+  background-image: linear-gradient(rgb(23 33 38 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(23 33 38 / 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
   font-family: 'DM Sans', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 0;
+}
+
+::selection {
+  background: var(--yellow);
+  color: var(--ink);
 }
 
 button, a, input, textarea, select {
