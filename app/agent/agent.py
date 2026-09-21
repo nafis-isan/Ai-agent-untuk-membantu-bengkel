@@ -126,6 +126,7 @@ def run_agent(
     db: Session,
     session_id: str = "default",
     confirmed_action: dict | None = None,
+    system_prompt: str | None = None,
 ) -> dict[str, Any]:
     normalized_message = message.strip()
     if not normalized_message:
@@ -136,26 +137,29 @@ def run_agent(
         response_text = "Saya tetap mengikuti aturan operasional BengkelAI. Silakan tanyakan tentang pelanggan, kendaraan, servis, atau suku cadang."
         conversation_memory.add(db, session_id, "user", normalized_message)
         conversation_memory.add(db, session_id, "assistant", response_text)
-        return {"response": response_text, "actions": []}
+        return {"response": response_text, "actions": [], "metrics": {"tool_calls": 0, "attempts": 0}}
     message = normalized_message
     if confirmed_action:
         response_text = _execute_confirmed_action(confirmed_action, db, session_id)
         conversation_memory.add(db, session_id, "user", "Konfirmasi tindakan servis")
         conversation_memory.add(db, session_id, "assistant", response_text)
-        return {"response": response_text, "actions": []}
+        return {"response": response_text, "actions": [], "metrics": {"tool_calls": 0, "attempts": 0}}
 
     history = conversation_memory.get(db, session_id)
     history_text = "\n".join(
         f"{item['role'].capitalize()}: {item['content']}" for item in history
     )
-    prompt = SYSTEM_PROMPT
+    prompt = system_prompt or SYSTEM_PROMPT
     if history_text:
         prompt += f"\n\nRiwayat percakapan:\n{history_text}"
     prompt += f"\n\nPesan pengguna:\n{message}"
 
     actions: list[dict] = []
     response_text = ""
+    tool_call_count = 0
+    attempt_count = 0
     for attempt in range(2):
+        attempt_count += 1
         if client is None:
             raise RuntimeError("GEMINI_API_KEY environment variable is not set")
         daily_budget = float(os.getenv("GEMINI_DAILY_BUDGET_USD", "0"))
@@ -180,6 +184,7 @@ def run_agent(
         db.commit()
         logger.info("agent_request session=%s model=%s input_tokens=%s output_tokens=%s estimated_cost=%.6f", session_id, MODEL_NAME, input_tokens, output_tokens, estimated_cost)
         tool_results, new_actions = _call_tools(response, db, session_id)
+        tool_call_count += len(getattr(response, "function_calls", None) or [])
         actions.extend(new_actions)
         if not tool_results:
             response_text = (response.text or "").strip() or "Maaf, tidak dapat memproses permintaan Anda."
@@ -194,4 +199,8 @@ def run_agent(
 
     conversation_memory.add(db, session_id, "user", message)
     conversation_memory.add(db, session_id, "assistant", response_text)
-    return {"response": response_text, "actions": actions}
+    return {
+        "response": response_text,
+        "actions": actions,
+        "metrics": {"tool_calls": tool_call_count, "attempts": attempt_count},
+    }

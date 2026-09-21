@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import requests
 from sqlalchemy.orm import Session
 
-from app.agent.agent import run_agent
+from app.agent.orchestration import run_orchestrated_agent
 from app.auth import require_admin
 from app.database.dependencies import get_db
 
@@ -60,7 +60,7 @@ def chat(
             )
         _check_rate_limit(request.session_id)
 
-        result = run_agent(
+        result = run_orchestrated_agent(
             message=request.message,
             db=db,
             session_id=request.session_id,
