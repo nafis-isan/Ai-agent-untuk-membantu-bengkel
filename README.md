@@ -1,22 +1,24 @@
 # BengkelAI
 
-Sistem manajemen bengkel berbasis web yang menggabungkan backend FastAPI, frontend Nuxt, database, dan AI Agent dari Google Gemini. Project ini dibuat untuk membantu pengelolaan pelanggan, kendaraan, servis, suku cadang, serta informasi operasional bengkel.
+BengkelAI adalah sistem manajemen bengkel berbasis web yang mengintegrasikan backend FastAPI, frontend Nuxt, database, dan AI assistant dari Google Gemini. Project ini dirancang untuk membantu operasional bengkel seperti pencatatan pelanggan, kendaraan, jadwal servis, stok suku cadang, serta analisis performa bengkel dengan bantuan AI.
 
-## Fitur yang tersedia saat ini
+## Ringkasan fitur
 
-- CRUD pelanggan
-- CRUD kendaraan
-- CRUD mekanik
-- CRUD suku cadang / sparepart
-- CRUD service order
-- Dashboard dan insight operasional
-- AI Chat dengan Google Gemini
-- Riwayat percakapan per `session_id`
-- Database otomatis fallback dari PostgreSQL ke SQLite
+- Manajemen pelanggan
+- Manajemen kendaraan
+- Manajemen mekanik
+- Manajemen suku cadang / sparepart
+- Manajemen service order
+- Manajemen appointment / janji temu
+- Dashboard dan insight operasi bengkel
+- AI chat berbasis Gemini
+- Histori percakapan per `session_id`
+- Autentikasi admin untuk endpoint tertentu
+- Fallback database otomatis dari PostgreSQL ke SQLite
 - Dokumentasi API otomatis dengan FastAPI
-- Docker Compose untuk menjalankan backend, frontend, dan database sekaligus
+- Docker Compose untuk menjalankan seluruh stack
 
-## Teknologi yang digunakan
+## Teknologi utama
 
 - Backend: Python, FastAPI, SQLAlchemy, Pydantic
 - Frontend: Nuxt.js, Vue 3, Pinia, Tailwind CSS, Nuxt UI
@@ -25,32 +27,36 @@ Sistem manajemen bengkel berbasis web yang menggabungkan backend FastAPI, fronte
 - Container: Docker, Docker Compose
 - Testing: Pytest
 
-## Struktur project
+## Arsitektur aplikasi
 
 ```text
-.
+BengkelAI
 ├── app/
-│   ├── agent/
+│   ├── agent/                  # Logic AI agent dan orchestration
 │   │   ├── agent.py
 │   │   ├── memory.py
 │   │   ├── prompts.py
 │   │   └── tools.py
-│   ├── api/
+│   ├── api/                   # Endpoint FastAPI
+│   │   ├── appointments.py
+│   │   ├── auth.py
 │   │   ├── chat.py
 │   │   ├── customers.py
 │   │   ├── insights.py
 │   │   ├── services.py
 │   │   ├── spareparts.py
 │   │   └── vehicles.py
-│   ├── database/
+│   ├── database/              # Model, koneksi, migrasi, seed
 │   │   ├── connection.py
 │   │   ├── dependencies.py
 │   │   ├── init_db.py
 │   │   ├── models.py
 │   │   ├── schemas.py
 │   │   └── seed.py
-│   └── main.py
-├── frontend/
+│   ├── auth.py                # Admin auth + JWT-like token
+│   ├── main.py                # App FastAPI utama
+│   └── ...
+├── frontend/                  # Aplikasi Nuxt frontend
 │   ├── app.vue
 │   ├── assets/
 │   ├── composables/
@@ -69,41 +75,51 @@ Sistem manajemen bengkel berbasis web yang menggabungkan backend FastAPI, fronte
 ├── docker-compose.yml
 ├── requirements.txt
 ├── README.md
-├── build_log.txt
-├── presentation_english.md
 ├── bengkel.db
-└── test_bengkel.db
+├── test_bengkel.db
+└── presentation_english.md
 ```
 
-## Prasyarat
+## Persyaratan sistem
 
 - Python 3.12+
 - Node.js 22+
 - npm
-- Docker Desktop (opsional, untuk menjalankan via Docker)
-- API key Google Gemini untuk fitur AI chat
+- Docker Desktop (opsional, untuk menjalankan dengan Docker)
+- API key Google Gemini
+- Akses ke PostgreSQL atau SQLite untuk penyimpanan data
 
 ## Konfigurasi environment
 
-Buat file `.env` dari template `.env.example`:
+Buat file `.env` berdasarkan template `.env.example`:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
 GEMINI_MODEL=gemini-3.5-flash
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=change-this-password
+ADMIN_TOKEN_SECRET=change-this-secret
+ADMIN_TOKEN_TTL_SECONDS=28800
+GEMINI_DAILY_BUDGET_USD=0
+GEMINI_INPUT_COST_PER_1M=0
+GEMINI_OUTPUT_COST_PER_1M=0
 POSTGRES_DB=bengkel
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=password
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
+FRONTEND_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
-Catatan:
+Penjelasan singkat:
 
-- Jika `POSTGRES_DB`, `POSTGRES_USER`, dan `POSTGRES_PASSWORD` lengkap, aplikasi akan mencoba menggunakan PostgreSQL.
-- Jika PostgreSQL tidak tersedia, aplikasi otomatis fallback ke SQLite.
-- Project saat ini belum memiliki autentikasi user / login seperti admin management.
+- `GEMINI_API_KEY` wajib untuk fitur AI chat
+- `ADMIN_USERNAME` dan `ADMIN_PASSWORD` dipakai untuk login admin
+- `ADMIN_TOKEN_SECRET` wajib agar token autentikasi dibuat dan diverifikasi dengan aman
+- Jika `POSTGRES_DB`, `POSTGRES_USER`, dan `POSTGRES_PASSWORD` terisi, aplikasi akan mencoba menggunakan PostgreSQL
+- Jika PostgreSQL tidak tersedia, aplikasi otomatis fallback ke SQLite
 
-## Menjalankan backend secara lokal
+## Menjalankan backend lokal
 
 1. Buat virtual environment
 
@@ -129,25 +145,57 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Salin environment
+3. Copy environment file
 
 ```bash
 copy .env.example .env
 ```
 
-4. Jalankan server
+4. Jalankan server backend
 
 ```bash
 python -m uvicorn app.main:app --reload
 ```
 
-Server akan berjalan di:
+Server akan aktif di:
 
 ```text
 http://localhost:8000
 ```
 
-## Menjalankan frontend secara lokal
+## Login admin
+
+Aplikasi memiliki autentikasi admin untuk endpoint yang dilindungi, termasuk chat AI dan operasi tertentu. Login dilakukan melalui endpoint:
+
+```http
+POST /auth/login
+```
+
+Request body:
+
+```json
+{
+  "username": "admin",
+  "password": "change-this-password"
+}
+```
+
+Response:
+
+```json
+{
+  "access_token": "<token>",
+  "token_type": "bearer"
+}
+```
+
+Gunakan token tersebut di header berikut untuk endpoint yang membutuhkan hak admin:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+## Menjalankan frontend lokal
 
 ```bash
 cd frontend
@@ -161,7 +209,7 @@ Frontend akan berjalan di:
 http://localhost:3000
 ```
 
-Untuk mengubah base URL backend, dapat dibuat file `.env` di folder frontend:
+Jika backend berjalan di port lain, atur variabel berikut di file `.env` di folder frontend:
 
 ```env
 NUXT_PUBLIC_API_BASE=http://localhost:8000
@@ -181,7 +229,7 @@ Layanan yang tersedia:
 - Backend: http://localhost:8000
 - PostgreSQL: localhost:5432
 
-Untuk menghentikan:
+Untuk menghentikan seluruh layanan:
 
 ```bash
 docker compose down
@@ -189,7 +237,7 @@ docker compose down
 
 ## Seed data (opsional)
 
-Untuk menambahkan data contoh pelanggan, kendaraan, mekanik, dan sparepart, jalankan:
+Untuk menambahkan data contoh seperti pelanggan, kendaraan, mekanik, dan sparepart, jalankan:
 
 ```bash
 python -m app.database.seed
@@ -198,6 +246,10 @@ python -m app.database.seed
 ## Endpoint API utama
 
 Semua endpoint utama tidak memakai prefix `/api`.
+
+### Autentikasi
+
+- `POST /auth/login`
 
 ### Pelanggan
 
@@ -215,14 +267,6 @@ Semua endpoint utama tidak memakai prefix `/api`.
 - `PUT /vehicles/{id}`
 - `DELETE /vehicles/{id}`
 
-### Servis
-
-- `GET /services/`
-- `POST /services/`
-- `GET /services/{service_id}`
-- `PUT /services/{service_id}`
-- `DELETE /services/{service_id}`
-
 ### Sparepart
 
 - `GET /spareparts/`
@@ -231,58 +275,121 @@ Semua endpoint utama tidak memakai prefix `/api`.
 - `PUT /spareparts/{id}`
 - `DELETE /spareparts/{id}`
 
-### Chat AI
+### Servis / Service Order
+
+- `GET /services/`
+- `POST /services/`
+- `GET /services/{service_id}`
+- `PUT /services/{service_id}`
+- `DELETE /services/{service_id}`
+
+### Appointment
+
+- `GET /appointments/`
+- `POST /appointments/`
+- `PATCH /appointments/{appointment_id}/status`
+
+### AI Chat
 
 - `POST /chat/`
 
-### Insight
+### Insight / Dashboard
 
 - `GET /insights/`
 
-## Dokumentasi API
+### Health / Monitoring
 
-Setelah backend berjalan, dokumentasi interaktif tersedia di:
+- `GET /`
+- `GET /health`
+- `GET /metrics`
+
+## Dokumentasi API interaktif
+
+Setelah backend berjalan, dokumentasi otomatis tersedia di:
 
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
-## Contoh request chat
+## Contoh request
 
-```json
-{
-  "message": "Tampilkan servis yang masih menunggu",
-  "session_id": "budi-001"
-}
+### Login admin
+
+```bash
+curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"change-this-password"}'
+```
+
+### Chat AI
+
+```bash
+curl -X POST http://localhost:8000/chat/ \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "message": "Tampilkan servis yang masih menunggu",
+    "session_id": "budi-001"
+  }'
+```
+
+### Membuat pelanggan baru
+
+```bash
+curl -X POST http://localhost:8000/customers/ \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{
+    "name": "Budi Santoso",
+    "phone": "081234567890",
+    "email": "budi@example.com",
+    "address": "Jl. Merdeka No. 10"
+  }'
 ```
 
 ## Testing
 
 Project memiliki test CRUD dasar di folder `tests/`.
 
-Untuk menjalankan test, install `pytest` terlebih dahulu:
+Untuk menjalankan test:
 
 ```bash
 pip install pytest
 pytest tests/
 ```
 
+## Troubleshooting
+
+### 1. AI chat gagal karena API key invalid
+
+Pastikan `GEMINI_API_KEY` sudah diisi dengan key yang valid dan restart backend setelah perubahan `.env`.
+
+### 2. Admin login gagal
+
+Periksa variabel berikut di `.env`:
+
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD`
+- `ADMIN_TOKEN_SECRET`
+
+### 3. PostgreSQL tidak bisa terhubung
+
+Aplikasi akan otomatis fallback ke SQLite jika koneksi PostgreSQL gagal. Namun untuk lingkungan produksi, pastikan konfigurasi PostgreSQL benar dan port 5432 tidak diblokir.
+
+### 4. Frontend tidak terhubung ke backend
+
+Pastikan `NUXT_PUBLIC_API_BASE` di frontend menunjuk ke URL backend yang benar, misalnya:
+
+```env
+NUXT_PUBLIC_API_BASE=http://localhost:8000
+```
+
 ## Catatan implementasi
 
-- Project saat ini fokus pada fitur CRUD dan AI chat.
-- Fitur login / autentikasi belum ada di project.
-- AI chat hanya akan berfungsi jika `GEMINI_API_KEY` diisi dengan key valid.
-- Data hasil chat disimpan dengan `session_id` untuk menjaga konteks percakapan.
+- Project saat ini fokus pada fitur operasional bengkel dan AI assistant berbasis Gemini.
+- Endpoint yang memerlukan otorisasi admin harus dikirim dengan token bearer yang valid.
+- Data chat disimpan berdasarkan `session_id` agar konteks percakapan dapat dipertahankan.
+- Struktur aplikasi masih bisa dikembangkan lebih lanjut untuk modul seperti laporan keuangan, stok otomatis, atau role user yang lebih granular.
 
-## Ringkasan
+## Kesimpulan
 
-BengkelAI adalah aplikasi manajemen bengkel yang saat ini mencakup:
-
-- data pelanggan
-- data kendaraan
-- data mekanik
-- data suku cadang
-- data servis
-- insight operasional
-- AI Assistant berbasis Gemini
-
-Project ini sudah siap dipakai untuk pengembangan lebih lanjut sesuai kebutuhan bengkel yang lebih kompleks.
+BengkelAI adalah solusi manajemen bengkel yang cocok untuk lingkungan usaha kecil hingga menengah yang ingin menggabungkan operasional harian dengan dukungan AI. Dengan arsitektur yang terpisah antara frontend, backend, dan database, project ini relatif mudah dikembangkan, diujicoba, dan di-deploy di berbagai lingkungan.
