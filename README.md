@@ -1,6 +1,6 @@
 # BengkelAI
 
-BengkelAI adalah sistem manajemen bengkel berbasis web yang mengintegrasikan backend FastAPI, frontend Nuxt, database, dan AI assistant dari Google Gemini. Project ini dirancang untuk membantu operasional bengkel seperti pencatatan pelanggan, kendaraan, jadwal servis, stok suku cadang, serta analisis performa bengkel dengan bantuan AI.
+BengkelAI adalah sistem manajemen bengkel berbasis web yang mengintegrasikan backend FastAPI, frontend Nuxt, database, dan AI assistant melalui OpenRouter. Project ini dirancang untuk membantu operasional bengkel seperti pencatatan pelanggan, kendaraan, jadwal servis, stok suku cadang, serta analisis performa bengkel dengan bantuan AI.
 
 ## Ringkasan fitur
 
@@ -11,7 +11,7 @@ BengkelAI adalah sistem manajemen bengkel berbasis web yang mengintegrasikan bac
 - Manajemen service order
 - Manajemen appointment / janji temu
 - Dashboard dan insight operasi bengkel
-- AI chat berbasis Gemini
+- AI chat berbasis model chat OpenRouter
 - Histori percakapan per `session_id`
 - Autentikasi admin untuk endpoint tertentu
 - Fallback database otomatis dari PostgreSQL ke SQLite
@@ -23,7 +23,7 @@ BengkelAI adalah sistem manajemen bengkel berbasis web yang mengintegrasikan bac
 - Backend: Python, FastAPI, SQLAlchemy, Pydantic
 - Frontend: Nuxt.js, Vue 3, Pinia, Tailwind CSS, Nuxt UI
 - Database: PostgreSQL dan SQLite
-- AI: Google Gemini via `google-genai`
+- AI: OpenRouter via OpenAI-compatible Chat Completions API; model default `google/gemma-4-31b-it:free`
 - Container: Docker, Docker Compose
 - Testing: Pytest
 
@@ -86,7 +86,7 @@ BengkelAI
 - Node.js 22+
 - npm
 - Docker Desktop (opsional, untuk menjalankan dengan Docker)
-- API key Google Gemini
+- API key OpenRouter
 - Akses ke PostgreSQL atau SQLite untuk penyimpanan data
 
 ## Konfigurasi environment
@@ -94,15 +94,16 @@ BengkelAI
 Buat file `.env` berdasarkan template `.env.example`:
 
 ```env
-GEMINI_API_KEY=your_api_key_here
-GEMINI_MODEL=gemini-3.5-flash
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_MODEL=google/gemma-4-31b-it:free
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=change-this-password
 ADMIN_TOKEN_SECRET=change-this-secret
 ADMIN_TOKEN_TTL_SECONDS=28800
-GEMINI_DAILY_BUDGET_USD=0
-GEMINI_INPUT_COST_PER_1M=0
-GEMINI_OUTPUT_COST_PER_1M=0
+OPENROUTER_DAILY_BUDGET_USD=0
+OPENROUTER_INPUT_COST_PER_1M=0
+OPENROUTER_OUTPUT_COST_PER_1M=0
 POSTGRES_DB=bengkel
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=password
@@ -113,7 +114,10 @@ FRONTEND_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 
 Penjelasan singkat:
 
-- `GEMINI_API_KEY` wajib untuk fitur AI chat
+- `OPENROUTER_API_KEY` wajib untuk fitur AI chat
+- `OPENROUTER_MODEL` menentukan model chat yang dipakai; model gratis dapat memiliki batas permintaan atau ketersediaan provider
+- `nace-ai/drex-v1.5` tidak dipakai sebagai model chat karena hanya menyediakan keputusan terstruktur melalui Decisions API
+- `OPENROUTER_DAILY_BUDGET_USD`, `OPENROUTER_INPUT_COST_PER_1M`, dan `OPENROUTER_OUTPUT_COST_PER_1M` mengatur batas harian dan estimasi biaya (nilai biaya per satu juta token)
 - `ADMIN_USERNAME` dan `ADMIN_PASSWORD` dipakai untuk login admin
 - `ADMIN_TOKEN_SECRET` wajib agar token autentikasi dibuat dan diverifikasi dengan aman
 - Jika `POSTGRES_DB`, `POSTGRES_USER`, dan `POSTGRES_PASSWORD` terisi, aplikasi akan mencoba menggunakan PostgreSQL
@@ -361,7 +365,7 @@ pytest tests/
 
 ### 1. AI chat gagal karena API key invalid
 
-Pastikan `GEMINI_API_KEY` sudah diisi dengan key yang valid dan restart backend setelah perubahan `.env`.
+Pastikan `DASHSCOPE_API_KEY` sudah diisi dengan key yang valid dan restart backend setelah perubahan `.env`.
 
 ### 2. Admin login gagal
 
@@ -385,7 +389,7 @@ NUXT_PUBLIC_API_BASE=http://localhost:8000
 
 ## Catatan implementasi
 
-- Project saat ini fokus pada fitur operasional bengkel dan AI assistant berbasis Gemini.
+- Project saat ini fokus pada fitur operasional bengkel dan AI assistant berbasis Qwen.
 - Endpoint yang memerlukan otorisasi admin harus dikirim dengan token bearer yang valid.
 - Data chat disimpan berdasarkan `session_id` agar konteks percakapan dapat dipertahankan.
 - Struktur aplikasi masih bisa dikembangkan lebih lanjut untuk modul seperti laporan keuangan, stok otomatis, atau role user yang lebih granular.

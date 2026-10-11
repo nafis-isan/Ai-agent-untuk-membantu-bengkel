@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-os.environ.setdefault("GEMINI_API_KEY", "test-key")
+os.environ.setdefault("OPENROUTER_API_KEY", "test-key")
 os.environ.setdefault("ADMIN_USERNAME", "admin")
 os.environ.setdefault("ADMIN_PASSWORD", "test-password")
 os.environ.setdefault("ADMIN_TOKEN_SECRET", "test-secret")

@@ -3,13 +3,11 @@ import os
 import hashlib
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any
 
 from dotenv import load_dotenv
-from google import genai
-from google.genai.errors import APIError
-from google.genai import types
+from openai import APIError, OpenAI
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
@@ -25,41 +23,55 @@ logger = logging.getLogger("bengkel.agent")
 MAX_MESSAGE_LENGTH = 4000
 INJECTION_PATTERNS = ("ignore previous instructions", "abaikan semua aturan", "system prompt", "jailbreak")
 
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("OPENROUTER_API_KEY")
 if not api_key:
-    raise ValueError("GEMINI_API_KEY environment variable is not set")
+    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-client = genai.Client(
+client = OpenAI(
     api_key=api_key,
-    http_options=types.HttpOptions(timeout=30000),
-) if api_key else None
-MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+    base_url=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
+    timeout=30.0,
+    max_retries=0,
+)
+MODEL_NAME = os.getenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
 
 
-def _tool_config() -> types.GenerateContentConfig:
-    declarations = [
-        types.FunctionDeclaration(
-            name=declaration["name"],
-            description=declaration["description"],
-            parameters=declaration["parameters"],
-        )
+def _tool_config() -> list[dict]:
+    def normalize_schema(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {
+                key: normalize_schema(item.lower() if key == "type" and isinstance(item, str) else item)
+                for key, item in value.items()
+            }
+        if isinstance(value, list):
+            return [normalize_schema(item) for item in value]
+        return value
+
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": declaration["name"],
+                "description": declaration["description"],
+                "parameters": normalize_schema(declaration["parameters"]),
+            },
+        }
         for declaration in TOOL_DECLARATIONS
     ]
-    return types.GenerateContentConfig(
-        tools=[types.Tool(function_declarations=declarations)],
-        temperature=0.2,
-    )
 
 
-def _text_config() -> types.GenerateContentConfig:
-    return types.GenerateContentConfig(temperature=0.2)
-
-
-def _generate_content(prompt: str, config: types.GenerateContentConfig, session_id: str) -> Any:
+def _generate_content(prompt: str, tools: bool, session_id: str) -> Any:
     for retry in range(2):
         started = time.perf_counter()
         try:
-            response = client.models.generate_content(model=MODEL_NAME, contents=prompt, config=config)
+            request = {
+                "model": MODEL_NAME,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.2,
+            }
+            if tools:
+                request["tools"] = _tool_config()
+            response = client.chat.completions.create(**request)
             logger.info("llm_request session=%s retry=%s duration_ms=%s", session_id, retry, round((time.perf_counter() - started) * 1000, 2))
             return response
         except (TimeoutError, APIError):
@@ -73,9 +85,19 @@ def _generate_content(prompt: str, config: types.GenerateContentConfig, session_
 def _call_tools(response: Any, db: Session, session_id: str) -> tuple[list[dict], list[dict]]:
     results = []
     actions = []
-    for function_call in getattr(response, "function_calls", None) or []:
-        name = getattr(function_call, "name", "")
-        arguments = dict(getattr(function_call, "args", {}) or {})
+    message = response.choices[0].message
+    for tool_call in getattr(message, "tool_calls", None) or []:
+        name = tool_call.function.name
+        try:
+            arguments = json.loads(tool_call.function.arguments or "{}")
+        except json.JSONDecodeError:
+            results.append({"tool": name, "error": "Parameter tool tidak valid."})
+            logger.warning("tool_arguments_invalid session=%s tool=%s", session_id, name)
+            continue
+        if not isinstance(arguments, dict):
+            results.append({"tool": name, "error": "Parameter tool tidak valid."})
+            logger.warning("tool_arguments_invalid session=%s tool=%s", session_id, name)
+            continue
         function = TOOL_FUNCTIONS.get(name)
         if function is None:
             results.append({"tool": name, "error": "Tool tidak tersedia."})
@@ -160,9 +182,7 @@ def run_agent(
     attempt_count = 0
     for attempt in range(2):
         attempt_count += 1
-        if client is None:
-            raise RuntimeError("GEMINI_API_KEY environment variable is not set")
-        daily_budget = float(os.getenv("GEMINI_DAILY_BUDGET_USD", "0"))
+        daily_budget = float(os.getenv("OPENROUTER_DAILY_BUDGET_USD", "0"))
         if daily_budget:
             start_of_day = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
             spent = db.query(func.coalesce(func.sum(AgentUsage.estimated_cost), 0)).filter(AgentUsage.created_at >= start_of_day).scalar()
@@ -170,24 +190,24 @@ def run_agent(
                 raise RuntimeError("Batas biaya AI harian telah tercapai.")
         response = _generate_content(
             prompt,
-            _tool_config() if attempt == 0 else _text_config(),
-            session_id,
+            tools=attempt == 0,
+            session_id=session_id,
         )
-        usage = getattr(response, "usage_metadata", None)
-        input_tokens = int(getattr(usage, "prompt_token_count", 0) or 0)
-        output_tokens = int(getattr(usage, "candidates_token_count", 0) or 0)
+        usage = getattr(response, "usage", None)
+        input_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
+        output_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
         estimated_cost = (
-            input_tokens * float(os.getenv("GEMINI_INPUT_COST_PER_1M", "0"))
-            + output_tokens * float(os.getenv("GEMINI_OUTPUT_COST_PER_1M", "0"))
+            input_tokens * float(os.getenv("OPENROUTER_INPUT_COST_PER_1M", "0"))
+            + output_tokens * float(os.getenv("OPENROUTER_OUTPUT_COST_PER_1M", "0"))
         ) / 1_000_000
         db.add(AgentUsage(session_id=session_id, model=MODEL_NAME, input_tokens=input_tokens, output_tokens=output_tokens, estimated_cost=estimated_cost))
         db.commit()
         logger.info("agent_request session=%s model=%s input_tokens=%s output_tokens=%s estimated_cost=%.6f", session_id, MODEL_NAME, input_tokens, output_tokens, estimated_cost)
         tool_results, new_actions = _call_tools(response, db, session_id)
-        tool_call_count += len(getattr(response, "function_calls", None) or [])
+        tool_call_count += len(getattr(response.choices[0].message, "tool_calls", None) or [])
         actions.extend(new_actions)
         if not tool_results:
-            response_text = (response.text or "").strip() or "Maaf, tidak dapat memproses permintaan Anda."
+            response_text = (response.choices[0].message.content or "").strip() or "Maaf, tidak dapat memproses permintaan Anda."
             break
         if actions:
             response_text = "Saya sudah menyiapkan tindakan berikut. Mohon konfirmasi sebelum menyimpan data."

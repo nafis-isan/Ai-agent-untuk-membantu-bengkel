@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 import httpx
 import time
 from collections import defaultdict, deque
-from google.genai.errors import APIError
+from openai import APIError, APITimeoutError, AuthenticationError, RateLimitError
 from pydantic import BaseModel
 import requests
 from sqlalchemy.orm import Session
@@ -70,23 +70,25 @@ def chat(
         return result
     except HTTPException:
         raise
-    except (TimeoutError, requests.exceptions.Timeout, httpx.TimeoutException) as e:
-        print(f"Gemini connection timeout: {type(e).__name__}: {e}")
+    except (TimeoutError, requests.exceptions.Timeout, httpx.TimeoutException, APITimeoutError) as e:
+        print(f"OpenRouter connection timeout: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=504,
-            detail="Koneksi ke Google Gemini timeout. Periksa jaringan Docker atau coba lagi.",
+            detail="Koneksi ke OpenRouter timeout. Periksa jaringan server atau coba lagi.",
         ) from e
     except APIError as e:
-        print(f"Gemini API error: {e}")
-        status_code = getattr(e, "code", 500)
+        print(f"OpenRouter API error: {e}")
+        status_code = getattr(e, "status_code", 502)
         error_text = str(e).lower()
-        if "api_key_invalid" in error_text or "api key not valid" in error_text:
+        if isinstance(e, AuthenticationError) or "api key" in error_text and "invalid" in error_text:
             status_code = 401
-            detail = "GEMINI_API_KEY tidak valid. Perbarui API key di file .env lalu restart backend."
-        elif status_code == 503:
-            detail = "Google Gemini sedang sibuk. Coba lagi beberapa saat."
+            detail = "OPENROUTER_API_KEY tidak valid. Perbarui API key di file .env lalu restart backend."
+        elif isinstance(e, RateLimitError) or status_code in (429, 503):
+            status_code = 503
+            detail = "Layanan OpenRouter sedang sibuk atau mencapai batas penggunaan. Coba lagi beberapa saat."
         else:
-            detail = "Google Gemini gagal memproses request. Periksa model dan API key."
+            status_code = status_code if 400 <= status_code < 600 else 502
+            detail = "OpenRouter gagal memproses request. Periksa model, endpoint, dan API key."
         raise HTTPException(status_code=status_code, detail=detail) from e
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
